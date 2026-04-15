@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { login as loginApi } from '../services/api';
 
+
 export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const { t, login } = useApp();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
@@ -14,12 +17,30 @@ export default function Login() {
     e.preventDefault(); setLoading(true); setError('');
     try {
       const r = await loginApi({ email: form.email, password: form.password });
+      localStorage.setItem('token', r.data.access)
       login({ email: r.data.email, username: r.data.username, role: r.data.role }, r.data.access);
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.detail || 'Невірний email або пароль');
     } finally { setLoading(false); }
   };
+
+//   const handleLogin = async () => {
+//   const res = await fetch('http://127.0.0.1:8000/api/auth/login/', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json'
+//     },
+//     body: JSON.stringify({
+//       email,
+//       password
+//     })
+//   })
+
+//   const data = await res.json()
+
+//   localStorage.setItem('token', data.access)
+// }
 
   return (
     <div style={{ minHeight: 'calc(100vh - 68px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>

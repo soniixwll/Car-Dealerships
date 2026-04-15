@@ -72,9 +72,10 @@ export default function CarDetail() {
   if (!car) return <div style={{ textAlign: 'center', padding: '100px 24px' }}>Авто не знайдено</div>;
 
   const priceUSD = Math.round(parseFloat(car.price_uah) / 41);
-  const images = car.images
-    ? [`http://127.0.0.1:8000${car.image}`]
-    : [];
+  const images = car.images || [];
+
+  console.log("CAR:", car)
+  console.log("IMAGES:", car.images)
 
   console.log(images)
 
@@ -107,7 +108,7 @@ export default function CarDetail() {
           {/* Gallery */}
           <div style={{ borderRadius: 16, overflow: 'hidden', background: 'var(--bg3)', aspectRatio: '16/9', marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {images.length > 0 ? (
-              <img src={images[activeImg]} alt={car.brand_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src={images[activeImg]?.image} alt={car.brand_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             ) : (
               <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" strokeWidth="1"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
             )}
@@ -116,7 +117,7 @@ export default function CarDetail() {
             <div style={{ display: 'flex', gap: 10 }}>
               {images.map((img, i) => (
                 <div key={i} onClick={() => setActiveImg(i)} style={{ width: 80, height: 56, borderRadius: 8, overflow: 'hidden', border: `2px solid ${activeImg === i ? '#3b82f6' : 'transparent'}`, cursor: 'pointer', flexShrink: 0 }}>
-                  <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={img.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
               ))}
             </div>

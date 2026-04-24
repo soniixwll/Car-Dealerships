@@ -1,0 +1,400 @@
+[
+{
+  "model": "users.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$gdm6t4tTmsb0Pxtegnec6J$528To4TUBp34LrZKesxorb6KNnCPJ275ELhJzp+HLnk=",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "admin",
+    "first_name": "",
+    "last_name": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-04-24T22:17:49.019Z",
+    "email": "admin@autohub.ua",
+    "role": "admin",
+    "phone": "",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.customuser",
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$cmOVZiEVk2fmRVkXraBsac$zYWooULRJDn5d/uY3+LtgrhMNTtFeLp/LMaL+Rok/eI=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "user",
+    "first_name": "Іван",
+    "last_name": "Петренко",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-04-24T22:17:49.111Z",
+    "email": "user@autohub.ua",
+    "role": "user",
+    "phone": "+380501112233",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "dealerships.dealership",
+  "pk": 1,
+  "fields": {
+    "name": "AutoHub Центр",
+    "district": "Печерський",
+    "address": "вул. Хрещатик, 10",
+    "latitude": "50.450100",
+    "longitude": "30.523400",
+    "phone": "+380441110001",
+    "email": "center@autohub.ua",
+    "working_hours": "Пн-Сб: 9:00–19:00",
+    "is_active": true
+  }
+},
+{
+  "model": "dealerships.dealership",
+  "pk": 2,
+  "fields": {
+    "name": "AutoHub Лівий берег",
+    "district": "Дніпровський",
+    "address": "просп. Соборності, 25",
+    "latitude": "50.451500",
+    "longitude": "30.601800",
+    "phone": "+380441110002",
+    "email": "left@autohub.ua",
+    "working_hours": "Пн-Сб: 9:00–19:00",
+    "is_active": true
+  }
+},
+{
+  "model": "dealerships.dealership",
+  "pk": 3,
+  "fields": {
+    "name": "AutoHub Захід",
+    "district": "Святошинський",
+    "address": "просп. Перемоги, 134",
+    "latitude": "50.456100",
+    "longitude": "30.365000",
+    "phone": "+380441110003",
+    "email": "west@autohub.ua",
+    "working_hours": "Пн-Сб: 9:00–19:00",
+    "is_active": true
+  }
+},
+{
+  "model": "cars.brand",
+  "pk": 1,
+  "fields": {
+    "name": "Toyota"
+  }
+},
+{
+  "model": "cars.brand",
+  "pk": 2,
+  "fields": {
+    "name": "Volkswagen"
+  }
+},
+{
+  "model": "cars.brand",
+  "pk": 3,
+  "fields": {
+    "name": "BMW"
+  }
+},
+{
+  "model": "cars.brand",
+  "pk": 4,
+  "fields": {
+    "name": "Tesla"
+  }
+},
+{
+  "model": "cars.carmodel",
+  "pk": 1,
+  "fields": {
+    "brand": 1,
+    "name": "Camry"
+  }
+},
+{
+  "model": "cars.carmodel",
+  "pk": 2,
+  "fields": {
+    "brand": 1,
+    "name": "RAV4"
+  }
+},
+{
+  "model": "cars.carmodel",
+  "pk": 3,
+  "fields": {
+    "brand": 2,
+    "name": "Passat"
+  }
+},
+{
+  "model": "cars.carmodel",
+  "pk": 4,
+  "fields": {
+    "brand": 2,
+    "name": "Tiguan"
+  }
+},
+{
+  "model": "cars.carmodel",
+  "pk": 5,
+  "fields": {
+    "brand": 3,
+    "name": "3 Series"
+  }
+},
+{
+  "model": "cars.carmodel",
+  "pk": 6,
+  "fields": {
+    "brand": 3,
+    "name": "X5"
+  }
+},
+{
+  "model": "cars.carmodel",
+  "pk": 7,
+  "fields": {
+    "brand": 4,
+    "name": "Model 3"
+  }
+},
+{
+  "model": "cars.generation",
+  "pk": 1,
+  "fields": {
+    "car_model": 1,
+    "name": "XV70",
+    "year_start": 2017,
+    "year_end": null
+  }
+},
+{
+  "model": "cars.generation",
+  "pk": 2,
+  "fields": {
+    "car_model": 2,
+    "name": "XA50",
+    "year_start": 2018,
+    "year_end": null
+  }
+},
+{
+  "model": "cars.generation",
+  "pk": 3,
+  "fields": {
+    "car_model": 3,
+    "name": "B8",
+    "year_start": 2014,
+    "year_end": 2023
+  }
+},
+{
+  "model": "cars.generation",
+  "pk": 4,
+  "fields": {
+    "car_model": 4,
+    "name": "II",
+    "year_start": 2016,
+    "year_end": null
+  }
+},
+{
+  "model": "cars.generation",
+  "pk": 5,
+  "fields": {
+    "car_model": 5,
+    "name": "G20",
+    "year_start": 2018,
+    "year_end": null
+  }
+},
+{
+  "model": "cars.generation",
+  "pk": 6,
+  "fields": {
+    "car_model": 6,
+    "name": "G05",
+    "year_start": 2018,
+    "year_end": null
+  }
+},
+{
+  "model": "cars.generation",
+  "pk": 7,
+  "fields": {
+    "car_model": 7,
+    "name": "Highland",
+    "year_start": 2023,
+    "year_end": null
+  }
+},
+{
+  "model": "cars.car",
+  "pk": 1,
+  "fields": {
+    "generation": 1,
+    "dealership": 1,
+    "year": 2021,
+    "body_type": "sedan",
+    "fuel_type": "petrol",
+    "transmission": "automatic",
+    "drive_type": "fwd",
+    "condition": "used",
+    "engine_volume": "2.5",
+    "power_hp": 200,
+    "mileage_km": 45000,
+    "color": "Чорний",
+    "avg_fuel_consumption": "7.5",
+    "price_uah": "950000.00",
+    "status": "available",
+    "created_at": "2026-04-24T22:17:49.212Z",
+    "updated_at": "2026-04-24T22:17:49.212Z"
+  }
+},
+{
+  "model": "cars.car",
+  "pk": 2,
+  "fields": {
+    "generation": 2,
+    "dealership": 2,
+    "year": 2023,
+    "body_type": "crossover",
+    "fuel_type": "hybrid",
+    "transmission": "automatic",
+    "drive_type": "awd",
+    "condition": "new",
+    "engine_volume": "2.5",
+    "power_hp": 222,
+    "mileage_km": 0,
+    "color": "Сріблястий",
+    "avg_fuel_consumption": "5.6",
+    "price_uah": "1450000.00",
+    "status": "available",
+    "created_at": "2026-04-24T22:17:49.212Z",
+    "updated_at": "2026-04-24T22:17:49.212Z"
+  }
+},
+{
+  "model": "cars.car",
+  "pk": 3,
+  "fields": {
+    "generation": 3,
+    "dealership": 1,
+    "year": 2019,
+    "body_type": "sedan",
+    "fuel_type": "diesel",
+    "transmission": "automatic",
+    "drive_type": "fwd",
+    "condition": "used",
+    "engine_volume": "2.0",
+    "power_hp": 190,
+    "mileage_km": 78000,
+    "color": "Білий",
+    "avg_fuel_consumption": "5.8",
+    "price_uah": "720000.00",
+    "status": "available",
+    "created_at": "2026-04-24T22:17:49.213Z",
+    "updated_at": "2026-04-24T22:17:49.213Z"
+  }
+},
+{
+  "model": "cars.car",
+  "pk": 4,
+  "fields": {
+    "generation": 4,
+    "dealership": 3,
+    "year": 2022,
+    "body_type": "crossover",
+    "fuel_type": "petrol",
+    "transmission": "automatic",
+    "drive_type": "awd",
+    "condition": "used",
+    "engine_volume": "2.0",
+    "power_hp": 180,
+    "mileage_km": 22000,
+    "color": "Синій",
+    "avg_fuel_consumption": "8.2",
+    "price_uah": "1100000.00",
+    "status": "available",
+    "created_at": "2026-04-24T22:17:49.213Z",
+    "updated_at": "2026-04-24T22:17:49.213Z"
+  }
+},
+{
+  "model": "cars.car",
+  "pk": 5,
+  "fields": {
+    "generation": 5,
+    "dealership": 1,
+    "year": 2022,
+    "body_type": "sedan",
+    "fuel_type": "petrol",
+    "transmission": "automatic",
+    "drive_type": "rwd",
+    "condition": "used",
+    "engine_volume": "2.0",
+    "power_hp": 258,
+    "mileage_km": 18000,
+    "color": "Чорний",
+    "avg_fuel_consumption": "7.1",
+    "price_uah": "1650000.00",
+    "status": "available",
+    "created_at": "2026-04-24T22:17:49.214Z",
+    "updated_at": "2026-04-24T22:17:49.214Z"
+  }
+},
+{
+  "model": "cars.car",
+  "pk": 6,
+  "fields": {
+    "generation": 6,
+    "dealership": 2,
+    "year": 2024,
+    "body_type": "suv",
+    "fuel_type": "diesel",
+    "transmission": "automatic",
+    "drive_type": "awd",
+    "condition": "new",
+    "engine_volume": "3.0",
+    "power_hp": 340,
+    "mileage_km": 0,
+    "color": "Графіт",
+    "avg_fuel_consumption": "7.8",
+    "price_uah": "3200000.00",
+    "status": "available",
+    "created_at": "2026-04-24T22:17:49.214Z",
+    "updated_at": "2026-04-24T22:17:49.214Z"
+  }
+},
+{
+  "model": "cars.car",
+  "pk": 7,
+  "fields": {
+    "generation": 7,
+    "dealership": 3,
+    "year": 2024,
+    "body_type": "sedan",
+    "fuel_type": "electric",
+    "transmission": "automatic",
+    "drive_type": "rwd",
+    "condition": "new",
+    "engine_volume": "0.0",
+    "power_hp": 283,
+    "mileage_km": 0,
+    "color": "Червоний",
+    "avg_fuel_consumption": "0.0",
+    "price_uah": "1850000.00",
+    "status": "available",
+    "created_at": "2026-04-24T22:17:49.215Z",
+    "updated_at": "2026-04-24T22:17:49.215Z"
+  }
+}
+]

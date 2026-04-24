@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Brand, CarModel, Generation, Car, CarImage
+from .models import Brand, CarModel, Generation, Car, CarImage, Favorite
 
 
 class CarImageSerializer(serializers.ModelSerializer):
@@ -32,6 +32,16 @@ class CarListSerializer(serializers.ModelSerializer):
             'mileage_km', 'condition', 'price_uah',
             'status', 'status_display', 'dealership_name',
         )
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    car = CarListSerializer(read_only=True)
+    car_id = serializers.PrimaryKeyRelatedField(queryset=Car.objects.all(), source='car', write_only=True)
+
+    class Meta:
+        model = Favorite
+        fields = ('id', 'car', 'car_id', 'created_at')
+        read_only_fields = ('id', 'created_at')
 
 
 class CarDetailSerializer(serializers.ModelSerializer):

@@ -71,7 +71,7 @@ export default function Profile() {
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
-              {favorites.map(car => <CarCard key={car.id} car={car} />)}
+              {favorites.map(f => <CarCard key={f.id} car={f.car} />)}
             </div>
           )}
         </div>

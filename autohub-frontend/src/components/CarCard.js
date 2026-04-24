@@ -4,9 +4,21 @@ import { Heart, GitCompare, Eye } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function CarCard({ car }) {
-  const { t, toggleFavorite, isFavorite, toggleCompare, isInCompare } = useApp();
+  const { t, user, toggleFavorite, isFavorite, toggleCompare, isInCompare } = useApp();
+  const navigate = useNavigate();
   const fav = isFavorite(car.id);
   const inComp = isInCompare(car.id);
+
+  const handleFavoriteClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      alert(t.auth?.login_required || 'Увійдіть, щоб додати в обране');
+      navigate('/login');
+      return;
+    }
+    toggleFavorite(car);
+  };
 
   const priceUAH = parseFloat(car.price_uah);
   const priceUSD = Math.round(priceUAH / 41);
@@ -35,8 +47,8 @@ export default function CarCard({ car }) {
           {car.condition === 'new' ? t.catalog.new : t.catalog.used}
         </div>
         {/* Fav button */}
-        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(car); }}
-          style={{ position: 'absolute', top: 10, right: 10, width: 34, height: 34, borderRadius: 8, background: 'rgba(0,0,0,0.5)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)' }}>
+        <button onClick={handleFavoriteClick}
+          style={{ position: 'absolute', top: 10, right: 10, width: 34, height: 34, borderRadius: 8, background: 'rgba(0,0,0,0.5)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)', cursor: 'pointer' }}>
           <Heart size={16} color={fav ? '#ef4444' : '#fff'} fill={fav ? '#ef4444' : 'none'} />
         </button>
       </div>

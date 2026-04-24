@@ -20,6 +20,11 @@ export default function Catalog() {
     mileage_max: '',
     ordering: 'price_uah',
   });
+  const [draftPrice, setDraftPrice] = useState({ min: '', max: searchParams.get('price_max') || '' });
+
+  const applyPrice = () => setFilters(p => ({ ...p, price_min: draftPrice.min, price_max: draftPrice.max }));
+  const clearPrice = () => { setDraftPrice({ min: '', max: '' }); setFilters(p => ({ ...p, price_min: '', price_max: '' })); };
+  const handlePriceKey = (e) => { if (e.key === 'Enter') applyPrice(); };
 
   useEffect(() => { getBrands().then(r => setBrands(r.data.results || r.data || [])).catch(() => {}); }, []);
 
@@ -38,7 +43,7 @@ export default function Catalog() {
   }, [filters, searchParams]);
 
   const toggleBrand = (name) => setFilters(p => ({ ...p, selectedBrands: p.selectedBrands.includes(name) ? p.selectedBrands.filter(b => b !== name) : [...p.selectedBrands, name] }));
-  const resetFilters = () => setFilters({ selectedBrands: [], price_min: '', price_max: '', year_min: '', year_max: '', mileage_max: '', ordering: 'price_uah' });
+  const resetFilters = () => { setFilters({ selectedBrands: [], price_min: '', price_max: '', year_min: '', year_max: '', mileage_max: '', ordering: 'price_uah' }); setDraftPrice({ min: '', max: '' }); };
 
   return (
     <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 24px' }}>
@@ -77,8 +82,16 @@ export default function Catalog() {
             <div style={{ marginBottom: 24 }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text2)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '.5px' }}>{t.catalog.price_range}</div>
               <div style={{ display: 'flex', gap: 8 }}>
-                <input type="number" placeholder="Min" value={filters.price_min} onChange={e => setFilters(p => ({ ...p, price_min: e.target.value }))} style={inputS} />
-                <input type="number" placeholder="Max" value={filters.price_max} onChange={e => setFilters(p => ({ ...p, price_max: e.target.value }))} style={inputS} />
+                <input type="number" placeholder="Min" min={0} step={10000} value={draftPrice.min} onChange={e => setDraftPrice(p => ({ ...p, min: e.target.value }))} onKeyDown={handlePriceKey} style={inputS} />
+                <input type="number" placeholder="Max" min={0} step={10000} value={draftPrice.max} onChange={e => setDraftPrice(p => ({ ...p, max: e.target.value }))} onKeyDown={handlePriceKey} style={inputS} />
+              </div>
+              <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                <button onClick={applyPrice} style={{ flex: 1, padding: '8px 12px', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                  {t.catalog.apply || 'Застосувати'}
+                </button>
+                {(filters.price_min || filters.price_max) && (
+                  <button onClick={clearPrice} aria-label="Clear price" style={{ padding: '8px 12px', background: 'var(--bg3)', color: 'var(--text2)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>×</button>
+                )}
               </div>
               <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 6 }}>Ціна в грн</div>
             </div>

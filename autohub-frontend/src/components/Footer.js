@@ -1,6 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Facebook, Instagram, Twitter, Youtube } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+
+const SOCIAL_LINKS = [
+  { Icon: Facebook, label: 'Facebook', href: '#' },
+  { Icon: Instagram, label: 'Instagram', href: '#' },
+  { Icon: Twitter, label: 'Twitter', href: '#' },
+  { Icon: Youtube, label: 'YouTube', href: '#' },
+];
 
 export default function Footer() {
   const { t } = useApp();
@@ -16,11 +24,14 @@ export default function Footer() {
               <span style={{ fontWeight: 800, fontSize: 20 }}>AutoHub</span>
             </div>
             <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.7, maxWidth: 280 }}>{t.footer.about_text}</p>
-            <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
-              {['Facebook', 'Instagram', 'Twitter'].map(s => (
-                <a key={s} href="#" style={{ fontSize: 13, color: 'var(--text3)', transition: '.15s' }}
-                  onMouseEnter={e => e.target.style.color = '#3b82f6'}
-                  onMouseLeave={e => e.target.style.color = 'var(--text3)'}>{s}</a>
+            <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+              {SOCIAL_LINKS.map(({ Icon, label, href }) => (
+                <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
+                  style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--bg3)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text2)', transition: '.15s' }}
+                  onMouseEnter={e => { e.currentTarget.style.color = '#3b82f6'; e.currentTarget.style.borderColor = '#3b82f6'; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = 'var(--text2)'; e.currentTarget.style.borderColor = 'var(--border)'; }}>
+                  <Icon size={16} />
+                </a>
               ))}
             </div>
           </div>
@@ -40,7 +51,14 @@ export default function Footer() {
           </div>
           <div>
             <h5 style={{ fontWeight: 700, marginBottom: 16, fontSize: 15 }}>{t.footer.follow}</h5>
-            <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 2 }}>Facebook<br/>Instagram<br/>Twitter<br/>YouTube</div>
+            {SOCIAL_LINKS.map(({ Icon, label, href }) => (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+                style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, color: 'var(--text2)', marginBottom: 10, transition: '.15s' }}
+                onMouseEnter={e => e.currentTarget.style.color = '#3b82f6'}
+                onMouseLeave={e => e.currentTarget.style.color = 'var(--text2)'}>
+                <Icon size={16} /> {label}
+              </a>
+            ))}
           </div>
         </div>
         <div style={{ borderTop: '1px solid var(--border)', paddingTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 13, color: 'var(--text3)' }}>

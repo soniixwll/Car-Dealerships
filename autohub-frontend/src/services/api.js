@@ -21,5 +21,8 @@ export const updateProfile = (data) => api.patch('/auth/profile/', data);
 export const getBookings = () => api.get('/bookings/');
 export const createBooking = (data) => api.post('/bookings/', data);
 export const deleteBooking = (id) => api.delete(`/bookings/${id}/`);
+export const getFavorites = () => api.get('/cars/favorites/');
+export const addFavorite = (carId) => api.post('/cars/favorites/', { car_id: carId });
+export const removeFavorite = (favId) => api.delete(`/cars/favorites/${favId}/`);
 
 export default api;

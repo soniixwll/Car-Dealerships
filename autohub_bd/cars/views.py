@@ -1,6 +1,6 @@
-from rest_framework import viewsets, permissions, decorators, response
-from .models import Brand, Car
-from .serializers import BrandSerializer, CarListSerializer, CarDetailSerializer
+from rest_framework import viewsets, permissions, decorators, response, mixins
+from .models import Brand, Car, Favorite
+from .serializers import BrandSerializer, CarListSerializer, CarDetailSerializer, FavoriteSerializer
 from .filters import CarFilter
 
 
@@ -61,3 +61,25 @@ class CarViewSet(viewsets.ReadOnlyModelViewSet):
             'total_monthly': round(total_monthly, 2),
             'total_annual': round(total_monthly * 12, 2),
         })
+
+
+class FavoriteViewSet(mixins.ListModelMixin,
+                      mixins.CreateModelMixin,
+                      mixins.DestroyModelMixin,
+                      viewsets.GenericViewSet):
+    serializer_class = FavoriteSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    pagination_class = None
+
+    def get_queryset(self):
+        return Favorite.objects.filter(user=self.request.user).select_related(
+            'car__generation__car_model__brand', 'car__dealership'
+        )
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        favorite, _ = Favorite.objects.get_or_create(
+            user=request.user, car=serializer.validated_data['car']
+        )
+        return response.Response(self.get_serializer(favorite).data, status=201)

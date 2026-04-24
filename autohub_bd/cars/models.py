@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from dealerships.models import Dealership
 
@@ -124,3 +125,18 @@ class CarImage(models.Model):
 
     class Meta:
         ordering = ['order']
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='favorites')
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='favorited_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Обране'
+        verbose_name_plural = 'Обране'
+        unique_together = ('user', 'car')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.user.email} ♥ {self.car}'

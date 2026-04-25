@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Calendar, CheckCircle2 } from 'lucide-react';
+import { X, Calendar, CheckCircle2, LockKeyhole, Car } from 'lucide-react';
+import CustomSelect from './CustomSelect';
 import { useApp } from '../context/AppContext';
 import { createBooking, getProfile, getAvailability } from '../services/api';
 
@@ -51,7 +52,9 @@ export default function BookingModal({ car, dealerships, onClose }) {
       <div style={modalStyle} onClick={e => e.stopPropagation()}>
         <button onClick={onClose} style={closeBtn}><X size={18} /></button>
         <div style={{ textAlign: 'center', padding: '40px 0' }}>
-          <div style={{ fontSize: 48, marginBottom: 16 }}>🔐</div>
+          <div style={{ width: 80, height: 80, borderRadius: 20, background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+            <LockKeyhole size={36} color="#3b82f6" />
+          </div>
           <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>{t.booking.login_required}</div>
           <a href="/login" style={primaryBtn}>{t.auth.sign_in}</a>
         </div>
@@ -135,7 +138,8 @@ export default function BookingModal({ car, dealerships, onClose }) {
 
         <form onSubmit={handleSubmit}>
           <div style={{ background: 'var(--bg3)', borderRadius: 10, padding: '12px 16px', marginBottom: 20, fontSize: 14, color: 'var(--text2)' }}>
-            🚗 {car.brand_name} {car.model_name} {car.year}
+            <Car size={15} color="var(--text3)" style={{ marginRight: 6, verticalAlign: 'middle' }} />
+            {car.brand_name} {car.model_name} {car.year}
           </div>
 
           {errors._general && (
@@ -146,9 +150,11 @@ export default function BookingModal({ car, dealerships, onClose }) {
 
           <div style={fieldStyle}>
             <label style={labelStyle}>{t.booking.salon}</label>
-            <select value={form.salon} onChange={e => setForm(p => ({ ...p, salon: e.target.value }))} required style={inputStyle}>
-              {dealerships.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-            </select>
+            <CustomSelect
+              value={form.salon}
+              onChange={v => setForm(p => ({ ...p, salon: v }))}
+              options={dealerships.map(d => ({ value: d.id, label: d.name }))}
+            />
             {fieldError('dealership')}
           </div>
 
@@ -160,17 +166,13 @@ export default function BookingModal({ car, dealerships, onClose }) {
             </div>
             <div style={fieldStyle}>
               <label style={labelStyle}>Час</label>
-              <select value={form.time} onChange={e => setForm(p => ({ ...p, time: e.target.value }))} required disabled={!form.date} style={{ ...inputStyle, opacity: form.date ? 1 : 0.6 }}>
-                <option value="">{form.date ? '— оберіть —' : 'Спочатку дата'}</option>
-                {TIME_SLOTS.map(slot => {
-                  const taken = takenTimes.includes(slot);
-                  return (
-                    <option key={slot} value={slot} disabled={taken}>
-                      {slot}{taken ? ' — зайнято' : ''}
-                    </option>
-                  );
-                })}
-              </select>
+              <CustomSelect
+                value={form.time}
+                onChange={v => setForm(p => ({ ...p, time: v }))}
+                disabled={!form.date}
+                placeholder={form.date ? '— оберіть —' : 'Спочатку дата'}
+                options={TIME_SLOTS.map(slot => ({ value: slot, label: slot, disabled: takenTimes.includes(slot) }))}
+              />
               {fieldError('booking_datetime')}
             </div>
           </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { X, ArrowRight } from 'lucide-react';
+import { X, ArrowRight, Scale, Car } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function Compare() {
@@ -19,7 +19,9 @@ export default function Compare() {
 
   if (compareList.length === 0) return (
     <div style={{ textAlign: 'center', padding: '120px 24px' }}>
-      <div style={{ fontSize: 72, marginBottom: 20 }}>⚖️</div>
+      <div style={{ width: 96, height: 96, borderRadius: 24, background: 'var(--card)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+        <Scale size={48} color="var(--text3)" />
+      </div>
       <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 10 }}>{t.compare.empty}</h2>
       <p style={{ color: 'var(--text2)', marginBottom: 28 }}>{t.compare.empty_sub}</p>
       <Link to="/catalog" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '14px 28px', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', borderRadius: 100, fontSize: 15, fontWeight: 600 }}>
@@ -52,7 +54,7 @@ export default function Compare() {
                   <X size={14} />
                 </button>
                 <div style={{ height: 120, borderRadius: 10, overflow: 'hidden', background: 'var(--bg3)', marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {img ? <img src={`http://127.0.0.1:8000${img.image}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontSize: 32 }}>🚗</span>}
+                  {img ? <img src={`http://127.0.0.1:8000${img.image}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Car size={36} color="var(--text3)" />}
                 </div>
                 <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 2 }}>{car.brand_name} {car.model_name}</div>
                 <div style={{ fontSize: 20, fontWeight: 800, color: '#3b82f6', marginBottom: 8 }}>${Math.round(parseFloat(car.price_uah) / 41).toLocaleString()}</div>

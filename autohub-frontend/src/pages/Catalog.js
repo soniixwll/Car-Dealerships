@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { SlidersHorizontal, RotateCcw, X } from 'lucide-react';
+import { SlidersHorizontal, RotateCcw, X, Search, ChevronUp, ChevronDown } from 'lucide-react';
+import CustomSelect from '../components/CustomSelect';
 import { useApp } from '../context/AppContext';
 import { getCars, getBrands } from '../services/api';
 import { useIsTablet } from '../hooks/useMediaQuery';
@@ -113,8 +114,8 @@ export default function Catalog() {
             <div style={{ marginBottom: 24 }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text2)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '.5px' }}>{t.catalog.price_range}</div>
               <div style={{ display: 'flex', gap: 8 }}>
-                <input type="number" placeholder="Min" min={0} step={10000} value={draftPrice.min} onChange={e => setDraftPrice(p => ({ ...p, min: e.target.value }))} onKeyDown={handlePriceKey} style={inputS} />
-                <input type="number" placeholder="Max" min={0} step={10000} value={draftPrice.max} onChange={e => setDraftPrice(p => ({ ...p, max: e.target.value }))} onKeyDown={handlePriceKey} style={inputS} />
+                <PriceInput placeholder="Min" value={draftPrice.min} onChange={v => setDraftPrice(p => ({ ...p, min: v }))} onKeyDown={handlePriceKey} step={10000} />
+                <PriceInput placeholder="Max" value={draftPrice.max} onChange={v => setDraftPrice(p => ({ ...p, max: v }))} onKeyDown={handlePriceKey} step={10000} />
               </div>
               <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
                 <button onClick={applyPrice} style={{ flex: 1, padding: '8px 12px', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
@@ -150,12 +151,17 @@ export default function Catalog() {
             <div style={{ fontSize: 14, color: 'var(--text2)' }}>Знайдено: <strong style={{ color: 'var(--text)' }}>{total}</strong> авто</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <span style={{ fontSize: 14, color: 'var(--text2)' }}>{t.catalog.sort}:</span>
-              <select value={filters.ordering} onChange={e => setFilters(p => ({ ...p, ordering: e.target.value }))} style={{ padding: '8px 14px', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 100, color: 'var(--text)', fontSize: 13, outline: 'none' }}>
-                <option value="price_uah">{t.catalog.sort_price_asc}</option>
-                <option value="-price_uah">{t.catalog.sort_price_desc}</option>
-                <option value="-year">{t.catalog.sort_year}</option>
-                <option value="mileage_km">{t.catalog.sort_mileage}</option>
-              </select>
+              <CustomSelect
+                pill
+                value={filters.ordering}
+                onChange={v => setFilters(p => ({ ...p, ordering: v }))}
+                options={[
+                  { value: 'price_uah', label: t.catalog.sort_price_asc },
+                  { value: '-price_uah', label: t.catalog.sort_price_desc },
+                  { value: '-year', label: t.catalog.sort_year },
+                  { value: 'mileage_km', label: t.catalog.sort_mileage },
+                ]}
+              />
             </div>
           </div>
 
@@ -165,8 +171,10 @@ export default function Catalog() {
             </div>
           ) : cars.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '100px 0', color: 'var(--text2)' }}>
-              <div style={{ fontSize: 48, marginBottom: 16 }}>🔍</div>
-              <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8 }}>Нічого не знайдено</div>
+              <div style={{ width: 80, height: 80, borderRadius: 20, background: 'var(--card)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                <Search size={36} color="var(--text3)" />
+              </div>
+              <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8, color: 'var(--text)' }}>Нічого не знайдено</div>
               <div>Спробуйте змінити фільтри</div>
             </div>
           ) : (
@@ -180,3 +188,34 @@ export default function Catalog() {
   );
 }
 const inputS = { flex: 1, padding: '9px 12px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)', fontSize: 13, outline: 'none', width: '100%' };
+
+function PriceInput({ placeholder, value, onChange, onKeyDown, step = 10000 }) {
+  const num = parseInt(value) || 0;
+  const increment = () => onChange(String(num + step));
+  const decrement = () => onChange(String(Math.max(0, num - step)));
+  return (
+    <div style={{ flex: 1, display: 'flex', alignItems: 'center', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', transition: 'border-color .2s' }}
+      onFocusCapture={e => e.currentTarget.style.borderColor = '#3b82f6'}
+      onBlurCapture={e => e.currentTarget.style.borderColor = 'var(--border)'}
+    >
+      <input
+        type="number"
+        placeholder={placeholder}
+        min={0}
+        step={step}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        onKeyDown={onKeyDown}
+        style={{ flex: 1, padding: '9px 8px 9px 12px', background: 'transparent', border: 'none', color: 'var(--text)', fontSize: 13, outline: 'none', width: '100%', MozAppearance: 'textfield' }}
+      />
+      <div style={{ display: 'flex', flexDirection: 'column', borderLeft: '1px solid var(--border)' }}>
+        <button type="button" onClick={increment} tabIndex={-1} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 18, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text2)', padding: 0, borderBottom: '1px solid var(--border)' }}>
+          <ChevronUp size={11} />
+        </button>
+        <button type="button" onClick={decrement} tabIndex={-1} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 18, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text2)', padding: 0 }}>
+          <ChevronDown size={11} />
+        </button>
+      </div>
+    </div>
+  );
+}

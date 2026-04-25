@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, MapPin, Phone, Mail, Clock } from 'lucide-react';
+import CustomSelect from '../components/CustomSelect';
 import { useApp } from '../context/AppContext';
 import { getCars, getDealerships, getBrands } from '../services/api';
 import CarCard from '../components/CarCard';
@@ -53,28 +54,40 @@ export default function Home() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap: 12, alignItems: 'end' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: 12, color: 'var(--text3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.5px', fontWeight: 600 }}>{t.home.brand}</label>
-                  <select value={search.brand} onChange={e => setSearch(p => ({ ...p, brand: e.target.value }))} style={{ width: '100%', padding: '10px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)', fontSize: 14, outline: 'none' }}>
-                    <option value="">Будь-яка</option>
-                    {brands.map(b => <option key={b.id} value={b.name}>{b.name}</option>)}
-                  </select>
+                  <CustomSelect
+                    value={search.brand}
+                    onChange={v => setSearch(p => ({ ...p, brand: v }))}
+                    placeholder="Будь-яка"
+                    options={[{ value: '', label: 'Будь-яка' }, ...brands.map(b => ({ value: b.name, label: b.name }))]}
+                  />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: 12, color: 'var(--text3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.5px', fontWeight: 600 }}>{t.home.max_price}</label>
-                  <select value={search.price_max} onChange={e => setSearch(p => ({ ...p, price_max: e.target.value }))} style={{ width: '100%', padding: '10px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)', fontSize: 14, outline: 'none' }}>
-                    <option value="">Будь-яка</option>
-                    <option value="615000">До $15,000</option>
-                    <option value="1230000">До $30,000</option>
-                    <option value="2050000">До $50,000</option>
-                    <option value="4100000">До $100,000</option>
-                  </select>
+                  <CustomSelect
+                    value={search.price_max}
+                    onChange={v => setSearch(p => ({ ...p, price_max: v }))}
+                    placeholder="Будь-яка"
+                    options={[
+                      { value: '', label: 'Будь-яка' },
+                      { value: '615000', label: 'До $15,000' },
+                      { value: '1230000', label: 'До $30,000' },
+                      { value: '2050000', label: 'До $50,000' },
+                      { value: '4100000', label: 'До $100,000' },
+                    ]}
+                  />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: 12, color: 'var(--text3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.5px', fontWeight: 600 }}>Стан</label>
-                  <select style={{ width: '100%', padding: '10px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)', fontSize: 14, outline: 'none' }}>
-                    <option value="">Будь-який</option>
-                    <option value="new">Новий</option>
-                    <option value="used">Вживаний</option>
-                  </select>
+                  <CustomSelect
+                    value=""
+                    onChange={() => {}}
+                    placeholder="Будь-який"
+                    options={[
+                      { value: '', label: 'Будь-який' },
+                      { value: 'new', label: 'Новий' },
+                      { value: 'used', label: 'Вживаний' },
+                    ]}
+                  />
                 </div>
                 <button type="submit" style={{ padding: '11px 24px', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', border: 'none', borderRadius: 8, fontSize: 15, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 4px 15px rgba(59,130,246,0.3)', whiteSpace: 'nowrap' }}>
                   {t.home.search_btn} <ArrowRight size={16} />

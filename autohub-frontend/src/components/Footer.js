@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Youtube } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { useIsTablet } from '../hooks/useMediaQuery';
 
 const SOCIAL_LINKS = [
   { Icon: Facebook, label: 'Facebook', href: '#' },
@@ -12,10 +13,12 @@ const SOCIAL_LINKS = [
 
 export default function Footer() {
   const { t } = useApp();
+  const isTablet = useIsTablet();
+  const gridCols = isTablet ? '1fr 1fr' : '2fr 1fr 1fr 1fr';
   return (
-    <footer style={{ background: 'var(--bg2)', borderTop: '1px solid var(--border)', padding: '60px 24px 32px', marginTop: 80 }}>
+    <footer style={{ background: 'var(--bg2)', borderTop: '1px solid var(--border)', padding: '60px 16px 32px', marginTop: 80 }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: 40, marginBottom: 48 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: gridCols, gap: isTablet ? 24 : 40, marginBottom: 48 }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
               <div style={{ width: 36, height: 36, background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

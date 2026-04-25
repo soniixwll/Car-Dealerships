@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { SlidersHorizontal, RotateCcw } from 'lucide-react';
+import { SlidersHorizontal, RotateCcw, X } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { getCars, getBrands } from '../services/api';
+import { useIsTablet } from '../hooks/useMediaQuery';
 import CarCard from '../components/CarCard';
 
 export default function Catalog() {
   const { t } = useApp();
   const [searchParams, setSearchParams] = useSearchParams();
+  const isTablet = useIsTablet();
   const [cars, setCars] = useState([]);
   const [brands, setBrands] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const [filters, setFilters] = useState({
     selectedBrands: searchParams.get('brand') ? [searchParams.get('brand')] : [],
@@ -45,24 +48,52 @@ export default function Catalog() {
   const toggleBrand = (name) => setFilters(p => ({ ...p, selectedBrands: p.selectedBrands.includes(name) ? p.selectedBrands.filter(b => b !== name) : [...p.selectedBrands, name] }));
   const resetFilters = () => { setFilters({ selectedBrands: [], price_min: '', price_max: '', year_min: '', year_max: '', mileage_max: '', ordering: 'price_uah' }); setDraftPrice({ min: '', max: '' }); };
 
+  const sidebarFloating = isTablet;
+  const showSidebar = !isTablet || filtersOpen;
+
+  const sidebarOuter = sidebarFloating
+    ? { position: 'fixed', top: 0, left: 0, width: 'min(320px, 85vw)', height: '100vh', zIndex: 200, background: 'var(--bg2)', overflowY: 'auto', padding: 20, transform: filtersOpen ? 'translateX(0)' : 'translateX(-100%)', transition: 'transform .25s', boxShadow: filtersOpen ? '4px 0 24px rgba(0,0,0,0.4)' : 'none' }
+    : { width: 260, flexShrink: 0 };
+  const sidebarInner = sidebarFloating
+    ? { background: 'transparent', border: 'none', padding: 0 }
+    : { background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: 20, position: 'sticky', top: 88 };
+
   return (
-    <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 24px' }}>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 32, fontWeight: 800 }}>{t.catalog.title}</h1>
-        <div style={{ color: 'var(--text2)', marginTop: 4 }}>{total} {t.catalog.vehicles}</div>
+    <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 16px' }}>
+      <div style={{ marginBottom: 20, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
+        <div>
+          <h1 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800 }}>{t.catalog.title}</h1>
+          <div style={{ color: 'var(--text2)', marginTop: 4, fontSize: 14 }}>{total} {t.catalog.vehicles}</div>
+        </div>
+        {sidebarFloating && (
+          <button onClick={() => setFiltersOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 100, color: 'var(--text)', fontSize: 13, fontWeight: 600 }}>
+            <SlidersHorizontal size={15} color="#3b82f6" /> {t.catalog.filters}
+          </button>
+        )}
       </div>
+
+      {sidebarFloating && filtersOpen && (
+        <div onClick={() => setFiltersOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 199 }} />
+      )}
 
       <div style={{ display: 'flex', gap: 28 }}>
         {/* SIDEBAR */}
-        <aside style={{ width: 260, flexShrink: 0 }}>
-          <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: 20, position: 'sticky', top: 88 }}>
+        <aside style={sidebarOuter} aria-hidden={sidebarFloating && !filtersOpen}>
+          <div style={sidebarInner}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: 16 }}>
                 <SlidersHorizontal size={18} color="#3b82f6" /> {t.catalog.filters}
               </div>
-              <button onClick={resetFilters} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#3b82f6', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500 }}>
-                <RotateCcw size={12} /> {t.catalog.reset}
-              </button>
+              <div style={{ display: 'flex', gap: 6 }}>
+                <button onClick={resetFilters} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#3b82f6', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500 }}>
+                  <RotateCcw size={12} /> {t.catalog.reset}
+                </button>
+                {sidebarFloating && (
+                  <button onClick={() => setFiltersOpen(false)} aria-label="Close filters" style={{ background: 'none', border: 'none', color: 'var(--text2)', cursor: 'pointer', padding: 4 }}>
+                    <X size={18} />
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Brands */}
@@ -129,7 +160,7 @@ export default function Catalog() {
           </div>
 
           {loading ? (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 20 }}>
               {Array(6).fill(0).map((_, i) => <div key={i} style={{ height: 360, background: 'var(--card)', borderRadius: 16, opacity: 0.5 }} />)}
             </div>
           ) : cars.length === 0 ? (
@@ -139,7 +170,7 @@ export default function Catalog() {
               <div>Спробуйте змінити фільтри</div>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 20 }}>
               {cars.map(car => <CarCard key={car.id} car={car} />)}
             </div>
           )}

@@ -48,7 +48,7 @@ export default function Profile() {
       </div>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: 4, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, padding: 4, width: 'fit-content', marginBottom: 32 }}>
+      <div style={{ display: 'flex', gap: 4, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, padding: 4, width: 'fit-content', maxWidth: '100%', overflowX: 'auto', marginBottom: 32 }}>
         {tabs.map(({ key, label, Icon }) => (
           <button key={key} onClick={() => setTab(key)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 18px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 500, transition: '.15s', background: tab === key ? 'linear-gradient(135deg,#1d4ed8,#3b82f6)' : 'transparent', color: tab === key ? '#fff' : 'var(--text2)' }}>
             <Icon size={16} /> {label}
@@ -70,7 +70,7 @@ export default function Profile() {
               </Link>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 20 }}>
               {favorites.map(f => <CarCard key={f.id} car={f.car} />)}
             </div>
           )}
@@ -125,7 +125,7 @@ export default function Profile() {
               <div>{t.profile.no_viewed}</div>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 20 }}>
               {recentlyViewed.map(car => <CarCard key={car.id} car={car} />)}
             </div>
           )}

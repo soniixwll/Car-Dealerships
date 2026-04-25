@@ -50,7 +50,7 @@ export default function Home() {
 
             {/* Search bar */}
             <form onSubmit={handleSearch} style={{ background: 'rgba(15,31,56,0.8)', border: '1px solid var(--border)', borderRadius: 16, padding: 20, backdropFilter: 'blur(12px)', marginBottom: 40 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr auto', gap: 12, alignItems: 'end' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap: 12, alignItems: 'end' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: 12, color: 'var(--text3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.5px', fontWeight: 600 }}>{t.home.brand}</label>
                   <select value={search.brand} onChange={e => setSearch(p => ({ ...p, brand: e.target.value }))} style={{ width: '100%', padding: '10px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)', fontSize: 14, outline: 'none' }}>
@@ -68,7 +68,7 @@ export default function Home() {
                     <option value="4100000">До $100,000</option>
                   </select>
                 </div>
-                <div style={{ gridColumn: '3 / 4' }}>
+                <div>
                   <label style={{ display: 'block', fontSize: 12, color: 'var(--text3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.5px', fontWeight: 600 }}>Стан</label>
                   <select style={{ width: '100%', padding: '10px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)', fontSize: 14, outline: 'none' }}>
                     <option value="">Будь-який</option>
@@ -107,7 +107,7 @@ export default function Home() {
             {t.home.view_all} <ArrowRight size={16} />
           </Link>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 20 }}>
           {cars.length > 0 ? cars.slice(0, 6).map(car => <CarCard key={car.id} car={car} />) : (
             Array(6).fill(0).map((_, i) => <div key={i} style={{ height: 360, background: 'var(--card)', borderRadius: 16, animation: 'pulse 1.5s infinite' }} />)
           )}
@@ -121,7 +121,7 @@ export default function Home() {
             <h2 style={{ fontSize: 36, fontWeight: 800, marginBottom: 12 }}>{t.home.our_salons}</h2>
             <p style={{ color: 'var(--text2)', fontSize: 16 }}>{t.home.salons_sub}</p>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 24 }}>
             {salons.map(salon => (
               <div key={salon.id} style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden', transition: 'transform .2s' }}
                 onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-4px)'}

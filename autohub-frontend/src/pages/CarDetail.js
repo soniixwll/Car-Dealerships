@@ -102,7 +102,7 @@ export default function CarDetail() {
         <span style={{ color: 'var(--text)' }}>{car.brand_name} {car.model_name}</span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: 32 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: 32 }}>
         {/* LEFT */}
         <div>
           {/* Gallery */}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AppProvider } from './context/AppContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -13,8 +14,11 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import './index.css';
 
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID || '';
+
 export default function App() {
   return (
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
     <AppProvider>
       <BrowserRouter>
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -35,5 +39,6 @@ export default function App() {
         </div>
       </BrowserRouter>
     </AppProvider>
+    </GoogleOAuthProvider>
   );
 }

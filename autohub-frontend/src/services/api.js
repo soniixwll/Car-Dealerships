@@ -16,6 +16,7 @@ export const getDealership = (id) => api.get(`/dealerships/${id}/`);
 export const calculateCost = (id, params) => api.get(`/cars/${id}/calculate/`, { params });
 export const login = (data) => api.post('/auth/login/', data);
 export const register = (data) => api.post('/auth/register/', data);
+export const googleLogin = (idToken) => api.post('/auth/google/', { id_token: idToken });
 export const getProfile = () => api.get('/auth/profile/');
 export const updateProfile = (data) => api.patch('/auth/profile/', data);
 export const getBookings = () => api.get('/bookings/');

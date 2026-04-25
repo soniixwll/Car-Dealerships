@@ -15,44 +15,6 @@ export default function CarDetail() {
   const [calc, setCalc] = useState({ monthly_km: 1500, result: null });
   const [loading, setLoading] = useState(true);
 
-  const bookTestDrive = async () => {
-  const token = localStorage.getItem('token')
-
-  if (!car) {
-  alert('Машина ще не завантажилась')
-  return
-  }
-
-  if (!token) {
-    alert('Спочатку увійди')
-    return
-  }
-
-  try {
-    const res = await fetch('http://127.0.0.1:8000/api/bookings/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        car: car.id,
-        // dealership: car.dealership || 1,
-        // date: new Date().toISOString()
-        dealership: 1,
-        booking_datetime: "2026-04-20T10:00:00"
-      })
-    })
-
-    const data = await res.json()
-    console.log(data)
-
-    alert('Запис створено 🚗')
-  } catch (err) {
-    console.error(err)
-  }
-}
-
   useEffect(() => {
     setLoading(true);
     getCar(id).then(r => { setCar(r.data); addRecentlyViewed(r.data); }).catch(() => {}).finally(() => setLoading(false));
@@ -73,11 +35,6 @@ export default function CarDetail() {
 
   const priceUSD = Math.round(parseFloat(car.price_uah) / 41);
   const images = car.images || [];
-
-  console.log("CAR:", car)
-  console.log("IMAGES:", car.images)
-
-  console.log(images)
 
   const fav = isFavorite(car.id);
   const inComp = isInCompare(car.id);
@@ -197,7 +154,7 @@ export default function CarDetail() {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
-              <button onClick={bookTestDrive} style={{ width: '100%', padding: '14px', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', border: 'none', borderRadius: 10, fontSize: 15, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 15px rgba(59,130,246,0.3)', cursor: 'pointer' }}>
+              <button onClick={() => setShowBooking(true)} style={{ width: '100%', padding: '14px', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', border: 'none', borderRadius: 10, fontSize: 15, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 15px rgba(59,130,246,0.3)', cursor: 'pointer' }}>
                 <Calendar size={18} /> {t.car.book_test_drive}
               </button>
               <button onClick={() => toggleFavorite(car)} style={{ width: '100%', padding: '12px', background: 'var(--bg3)', color: fav ? '#ef4444' : 'var(--text)', border: `1px solid ${fav ? 'rgba(239,68,68,0.4)' : 'var(--border)'}`, borderRadius: 10, fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer' }}>

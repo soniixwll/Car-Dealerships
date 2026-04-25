@@ -10,7 +10,7 @@ class BookingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TestDriveBooking
-        fields = ('id', 'car', 'car_display', 'dealership', 'dealership_name', 'booking_datetime', 'status', 'status_display', 'comment', 'created_at')
+        fields = ('id', 'car', 'car_display', 'dealership', 'dealership_name', 'booking_datetime', 'status', 'status_display', 'phone', 'comment', 'created_at')
         read_only_fields = ('status', 'created_at', 'user')
 
     def get_car_display(self, obj):

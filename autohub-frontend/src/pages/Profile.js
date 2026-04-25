@@ -15,9 +15,13 @@ export default function Profile() {
 
   useEffect(() => {
     if (!user) { navigate('/login'); return; }
-    getBookings().then(r => setBookings(r.data.results || r.data || [])).catch(() => {});
     getProfile().then(r => setProfile({ username: r.data.username || '', phone: r.data.phone || '' })).catch(() => {});
   }, [user]);
+
+  useEffect(() => {
+    if (!user || tab !== 'test_drives') return;
+    getBookings().then(r => setBookings(r.data.results || r.data || [])).catch(() => {});
+  }, [user, tab]);
 
   const handleCancelBooking = async (id) => {
     await deleteBooking(id).catch(() => {});

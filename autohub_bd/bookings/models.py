@@ -19,6 +19,7 @@ class TestDriveBooking(models.Model):
     dealership = models.ForeignKey(Dealership, on_delete=models.CASCADE, related_name='bookings')
     booking_datetime = models.DateTimeField()
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
+    phone = models.CharField(max_length=20, blank=True)
     comment = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

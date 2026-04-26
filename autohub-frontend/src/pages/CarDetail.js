@@ -73,7 +73,7 @@ export default function CarDetail() {
           {images.length > 1 && (
             <div style={{ display: 'flex', gap: 10 }}>
               {images.map((img, i) => (
-                <div key={i} onClick={() => setActiveImg(i)} style={{ width: 80, height: 56, borderRadius: 8, overflow: 'hidden', border: `2px solid ${activeImg === i ? '#3b82f6' : 'transparent'}`, cursor: 'pointer', flexShrink: 0 }}>
+                <div key={i} onClick={() => setActiveImg(i)} style={{ width: 80, height: 56, borderRadius: 8, overflow: 'hidden', border: `2px solid ${activeImg === i ? 'var(--blue)' : 'transparent'}`, cursor: 'pointer', flexShrink: 0 }}>
                   <img src={img.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
               ))}
@@ -115,17 +115,17 @@ export default function CarDetail() {
                 ].map(([label, val]) => (
                   <div key={label} style={{ background: 'var(--bg)', borderRadius: 10, padding: '12px 14px', border: '1px solid var(--border)' }}>
                     <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.5px' }}>{label}</div>
-                    <div style={{ fontWeight: 700, fontSize: 16, color: '#60a5fa' }}>{val}</div>
+                    <div style={{ fontWeight: 650, fontSize: 16, color: 'var(--blue)' }}>{val}</div>
                   </div>
                 ))}
-                <div style={{ background: 'rgba(59,130,246,0.1)', borderRadius: 10, padding: '12px 14px', border: '1px solid rgba(59,130,246,0.2)', gridColumn: '1/-1', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                <div style={{ background: 'rgba(79,134,217,0.1)', borderRadius: 10, padding: '12px 14px', border: '1px solid rgba(79,134,217,0.2)', gridColumn: '1/-1', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                   <div>
                     <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 4, textTransform: 'uppercase' }}>{t.car.total_monthly}</div>
-                    <div style={{ fontWeight: 800, fontSize: 20, color: '#3b82f6' }}>${Math.round(calc.result.total_monthly / 41)}</div>
+                    <div style={{ fontWeight: 650, fontSize: 20, color: 'var(--blue)' }}>${Math.round(calc.result.total_monthly / 41)}</div>
                   </div>
                   <div>
                     <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 4, textTransform: 'uppercase' }}>{t.car.total_yearly}</div>
-                    <div style={{ fontWeight: 800, fontSize: 20, color: '#3b82f6' }}>${Math.round(calc.result.total_annual / 41)}</div>
+                    <div style={{ fontWeight: 650, fontSize: 20, color: 'var(--blue)' }}>${Math.round(calc.result.total_annual / 41)}</div>
                   </div>
                 </div>
               </div>
@@ -140,27 +140,27 @@ export default function CarDetail() {
               <span style={{ padding: '4px 12px', borderRadius: 100, fontSize: 12, fontWeight: 700, background: car.condition === 'new' ? 'linear-gradient(135deg,#22c55e,#16a34a)' : 'rgba(234,179,8,0.2)', color: car.condition === 'new' ? '#fff' : '#eab308' }}>
                 {car.condition === 'new' ? t.catalog.new : t.catalog.used}
               </span>
-              <span style={{ padding: '4px 12px', borderRadius: 100, fontSize: 12, fontWeight: 600, background: 'rgba(59,130,246,0.1)', color: '#60a5fa', border: '1px solid rgba(59,130,246,0.2)' }}>{car.generation_name}</span>
+              <span style={{ padding: '4px 12px', borderRadius: 100, fontSize: 12, fontWeight: 600, background: 'rgba(79,134,217,0.1)', color: 'var(--blue)', border: '1px solid rgba(79,134,217,0.2)' }}>{car.generation_name}</span>
             </div>
-            <h1 style={{ fontSize: 26, fontWeight: 800, marginBottom: 4 }}>{car.brand_name} {car.model_name}</h1>
+            <h1 style={{ fontSize: 24, fontWeight: 650, marginBottom: 4 }}>{car.brand_name} {car.model_name}</h1>
             <div style={{ fontSize: 14, color: 'var(--text2)', marginBottom: 20 }}>{car.year} · {car.brand_name}</div>
 
             {car.description && <p style={{ fontSize: 14, color: 'var(--text2)', lineHeight: 1.7, marginBottom: 20 }}>{car.description}</p>}
 
             <div style={{ padding: '16px 0', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', marginBottom: 20 }}>
               <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 4 }}>{t.car.price}</div>
-              <div style={{ fontSize: 36, fontWeight: 800, color: '#3b82f6' }}>${priceUSD.toLocaleString()}</div>
+              <div style={{ fontSize: 30, fontWeight: 650, color: 'var(--blue)', letterSpacing: 0 }}>${priceUSD.toLocaleString()}</div>
               <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 4 }}>{Math.round(car.price_uah).toLocaleString()} грн</div>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
-              <button onClick={() => setShowBooking(true)} style={{ width: '100%', padding: '14px', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', border: 'none', borderRadius: 10, fontSize: 15, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: '0 4px 15px rgba(59,130,246,0.3)', cursor: 'pointer' }}>
+              <button onClick={() => setShowBooking(true)} style={{ width: '100%', minHeight: 48, padding: '14px', background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', border: 'none', borderRadius: 10, fontSize: 15, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer', whiteSpace: 'nowrap' }}>
                 <Calendar size={18} /> {t.car.book_test_drive}
               </button>
               <button onClick={() => toggleFavorite(car)} style={{ width: '100%', padding: '12px', background: 'var(--bg3)', color: fav ? '#ef4444' : 'var(--text)', border: `1px solid ${fav ? 'rgba(239,68,68,0.4)' : 'var(--border)'}`, borderRadius: 10, fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer' }}>
                 <Heart size={16} fill={fav ? '#ef4444' : 'none'} /> {fav ? t.car.remove_favorites : t.car.add_favorites}
               </button>
-              <button onClick={() => toggleCompare(car)} style={{ width: '100%', padding: '12px', background: 'var(--bg3)', color: inComp ? '#3b82f6' : 'var(--text)', border: `1px solid ${inComp ? 'rgba(59,130,246,0.4)' : 'var(--border)'}`, borderRadius: 10, fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer' }}>
+              <button onClick={() => toggleCompare(car)} style={{ width: '100%', padding: '12px', background: 'var(--bg3)', color: inComp ? 'var(--blue)' : 'var(--text)', border: `1px solid ${inComp ? 'rgba(79,134,217,0.4)' : 'var(--border)'}`, borderRadius: 10, fontSize: 14, fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer' }}>
                 <GitCompare size={16} /> {t.car.add_compare}
               </button>
             </div>
@@ -173,7 +173,7 @@ export default function CarDetail() {
                 {car.dealership_address && <div style={{ display: 'flex', gap: 6, fontSize: 13, color: 'var(--text2)' }}><MapPin size={14} style={{ flexShrink: 0, marginTop: 1 }} color="var(--text3)" />{car.dealership_address}</div>}
                 {car.dealership_phone && <div style={{ display: 'flex', gap: 6, fontSize: 13, color: 'var(--text2)' }}><Phone size={14} style={{ flexShrink: 0, marginTop: 1 }} color="var(--text3)" />{car.dealership_phone}</div>}
               </div>
-              <Link to="/salons" style={{ display: 'block', textAlign: 'center', marginTop: 12, fontSize: 13, color: '#3b82f6', fontWeight: 500 }}>{t.car.view_salon} →</Link>
+              <Link to="/salons" style={{ display: 'block', textAlign: 'center', marginTop: 12, fontSize: 13, color: 'var(--blue)', fontWeight: 500 }}>{t.car.view_salon} →</Link>
             </div>
           </div>
         </div>

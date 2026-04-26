@@ -40,7 +40,7 @@ export default function Register() {
   return (
     <div style={{ minHeight: 'calc(100vh - 68px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div style={{ width: '100%', maxWidth: 440, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 20, padding: 40 }}>
-        <h2 style={{ textAlign: 'center', fontWeight: 800, fontSize: 26, marginBottom: 6 }}>{t.auth.register_title}</h2>
+        <h2 style={{ textAlign: 'center', fontWeight: 650, fontSize: 24, marginBottom: 6 }}>{t.auth.register_title}</h2>
         <p style={{ textAlign: 'center', color: 'var(--text2)', fontSize: 14, marginBottom: 32 }}>{t.auth.register_sub}</p>
 
         {error && <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#ef4444', marginBottom: 16 }}>{error}</div>}
@@ -52,7 +52,7 @@ export default function Register() {
               <input type={type} value={form[key]} onChange={e => setForm(p => ({ ...p, [key]: e.target.value }))} placeholder={ph} required={key !== 'phone'} style={{ width: '100%', padding: '12px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)', fontSize: 15, outline: 'none' }} />
             </div>
           ))}
-          <button type="submit" disabled={loading} style={{ width: '100%', padding: '14px', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', border: 'none', borderRadius: 10, fontSize: 16, fontWeight: 600, marginTop: 8, cursor: 'pointer', opacity: loading ? 0.7 : 1 }}>
+          <button type="submit" disabled={loading} style={{ width: '100%', minHeight: 48, padding: '14px', background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', border: 'none', borderRadius: 10, fontSize: 15, fontWeight: 600, marginTop: 8, cursor: 'pointer', opacity: loading ? 0.7 : 1, whiteSpace: 'nowrap' }}>
             {loading ? '...' : t.auth.create_account}
           </button>
         </form>
@@ -75,7 +75,7 @@ export default function Register() {
         </div>
 
         <p style={{ textAlign: 'center', fontSize: 14, color: 'var(--text2)', marginTop: 20 }}>
-          {t.auth.have_account} <Link to="/login" style={{ color: '#3b82f6', fontWeight: 600 }}>{t.auth.sign_in_link}</Link>
+          {t.auth.have_account} <Link to="/login" style={{ color: 'var(--blue)', fontWeight: 600 }}>{t.auth.sign_in_link}</Link>
         </p>
       </div>
     </div>

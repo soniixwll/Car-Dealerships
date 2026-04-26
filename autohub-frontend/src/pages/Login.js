@@ -58,10 +58,10 @@ export default function Login() {
     <div style={{ minHeight: 'calc(100vh - 68px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div style={{ width: '100%', maxWidth: 440, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 20, padding: 40 }}>
         {/* Icon */}
-        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/><circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
+        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(79,134,217,0.15)', border: '1px solid rgba(79,134,217,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" strokeWidth="2"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/><circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
         </div>
-        <h2 style={{ textAlign: 'center', fontWeight: 800, fontSize: 26, marginBottom: 6 }}>{t.auth.login_title}</h2>
+        <h2 style={{ textAlign: 'center', fontWeight: 650, fontSize: 24, marginBottom: 6 }}>{t.auth.login_title}</h2>
         <p style={{ textAlign: 'center', color: 'var(--text2)', fontSize: 14, marginBottom: 32 }}>{t.auth.login_sub}</p>
 
         {error && <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#ef4444', marginBottom: 16 }}>{error}</div>}
@@ -74,12 +74,12 @@ export default function Login() {
           <div style={fieldS}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
               <label style={labelS}>{t.auth.password}</label>
-              <a href="#" style={{ fontSize: 13, color: '#3b82f6' }}>{t.auth.forgot_password}</a>
+              <a href="#" style={{ fontSize: 13, color: 'var(--blue)' }}>{t.auth.forgot_password}</a>
             </div>
             <input type="password" value={form.password} onChange={e => setForm(p => ({ ...p, password: e.target.value }))} required placeholder="••••••••" style={inputS} />
           </div>
 
-          <button type="submit" disabled={loading} style={{ width: '100%', padding: '14px', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', border: 'none', borderRadius: 10, fontSize: 16, fontWeight: 600, marginTop: 8, cursor: 'pointer', boxShadow: '0 4px 15px rgba(59,130,246,0.3)', opacity: loading ? 0.7 : 1 }}>
+          <button type="submit" disabled={loading} style={{ width: '100%', minHeight: 48, padding: '14px', background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', border: 'none', borderRadius: 10, fontSize: 15, fontWeight: 600, marginTop: 8, cursor: 'pointer', opacity: loading ? 0.7 : 1, whiteSpace: 'nowrap' }}>
             {loading ? '...' : t.auth.sign_in}
           </button>
         </form>
@@ -102,7 +102,7 @@ export default function Login() {
         </div>
 
         <p style={{ textAlign: 'center', fontSize: 14, color: 'var(--text2)', marginTop: 20 }}>
-          {t.auth.no_account} <Link to="/register" style={{ color: '#3b82f6', fontWeight: 600 }}>{t.auth.sign_up}</Link>
+          {t.auth.no_account} <Link to="/register" style={{ color: 'var(--blue)', fontWeight: 600 }}>{t.auth.sign_up}</Link>
         </p>
       </div>
     </div>

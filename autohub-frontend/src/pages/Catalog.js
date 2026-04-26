@@ -63,12 +63,12 @@ export default function Catalog() {
     <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 16px' }}>
       <div style={{ marginBottom: 20, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
         <div>
-          <h1 style={{ fontSize: 'clamp(24px, 5vw, 32px)', fontWeight: 800 }}>{t.catalog.title}</h1>
+          <h1 style={{ fontSize: 'clamp(21px, 3vw, 26px)', fontWeight: 600, lineHeight: 1.15 }}>{t.catalog.title}</h1>
           <div style={{ color: 'var(--text2)', marginTop: 4, fontSize: 14 }}>{total} {t.catalog.vehicles}</div>
         </div>
         {sidebarFloating && (
           <button onClick={() => setFiltersOpen(true)} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 100, color: 'var(--text)', fontSize: 13, fontWeight: 600 }}>
-            <SlidersHorizontal size={15} color="#3b82f6" /> {t.catalog.filters}
+            <SlidersHorizontal size={15} color="var(--blue)" /> {t.catalog.filters}
           </button>
         )}
       </div>
@@ -83,10 +83,10 @@ export default function Catalog() {
           <div style={sidebarInner}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: 16 }}>
-                <SlidersHorizontal size={18} color="#3b82f6" /> {t.catalog.filters}
+                <SlidersHorizontal size={18} color="var(--blue)" /> {t.catalog.filters}
               </div>
               <div style={{ display: 'flex', gap: 6 }}>
-                <button onClick={resetFilters} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: '#3b82f6', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500 }}>
+                <button onClick={resetFilters} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--blue)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500 }}>
                   <RotateCcw size={12} /> {t.catalog.reset}
                 </button>
                 {sidebarFloating && (
@@ -104,7 +104,7 @@ export default function Catalog() {
                 {brands.map(b => {
                   const checked = filters.selectedBrands.includes(b.name);
                   return (
-                    <label key={b.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', cursor: 'pointer', fontSize: 14, color: checked ? '#3b82f6' : 'var(--text)' }}>
+                    <label key={b.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', cursor: 'pointer', fontSize: 14, color: checked ? 'var(--blue)' : 'var(--text)' }}>
                       <input
                         type="checkbox"
                         checked={checked}
@@ -121,10 +121,9 @@ export default function Catalog() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          background: checked ? '#3b82f6' : 'var(--bg)',
-                          border: `1px solid ${checked ? '#60a5fa' : 'rgba(148,163,184,0.45)'}`,
-                          boxShadow: checked ? '0 0 0 3px rgba(59,130,246,0.18)' : 'inset 0 1px 0 rgba(255,255,255,0.04)',
-                          transition: 'background .15s, border-color .15s, box-shadow .15s',
+                          background: checked ? 'var(--blue)' : 'var(--bg)',
+                          border: `1px solid ${checked ? 'var(--blue-light)' : 'rgba(148,163,184,0.45)'}`,
+                          transition: 'background .15s, border-color .15s',
                         }}
                       >
                         {checked && <Check size={13} strokeWidth={3} color="#fff" />}
@@ -144,7 +143,7 @@ export default function Catalog() {
                 <PriceInput placeholder="Max" value={draftPrice.max} onChange={v => setDraftPrice(p => ({ ...p, max: v }))} onKeyDown={handlePriceKey} step={10000} />
               </div>
               <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                <button onClick={applyPrice} style={{ flex: 1, padding: '8px 12px', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                <button onClick={applyPrice} style={{ flex: 1, padding: '8px 12px', background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
                   {t.catalog.apply || 'Застосувати'}
                 </button>
                 {(filters.price_min || filters.price_max) && (
@@ -179,6 +178,7 @@ export default function Catalog() {
               <span style={{ fontSize: 14, color: 'var(--text2)' }}>{t.catalog.sort}:</span>
               <CustomSelect
                 pill
+                style={{ width: 280, maxWidth: '100%' }}
                 value={filters.ordering}
                 onChange={v => setFilters(p => ({ ...p, ordering: v }))}
                 options={[
@@ -221,7 +221,7 @@ function PriceInput({ placeholder, value, onChange, onKeyDown, step = 10000 }) {
   const decrement = () => onChange(String(Math.max(0, num - step)));
   return (
     <div style={{ flex: 1, display: 'flex', alignItems: 'center', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', transition: 'border-color .2s' }}
-      onFocusCapture={e => e.currentTarget.style.borderColor = '#3b82f6'}
+      onFocusCapture={e => e.currentTarget.style.borderColor = 'var(--blue)'}
       onBlurCapture={e => e.currentTarget.style.borderColor = 'var(--border)'}
     >
       <input

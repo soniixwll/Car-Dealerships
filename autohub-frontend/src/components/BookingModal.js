@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { X, Calendar, CheckCircle2, LockKeyhole, Car } from 'lucide-react';
+import { X, Calendar, CheckCircle2, LockKeyhole, Car, ChevronLeft, ChevronRight } from 'lucide-react';
 import CustomSelect from './CustomSelect';
 import { useApp } from '../context/AppContext';
 import { createBooking, getProfile, getAvailability } from '../services/api';
@@ -13,6 +13,7 @@ const TIME_SLOTS = (() => {
   }
   return slots.filter(t => t <= '18:30');
 })();
+const PHONE_RE = /^\+380\d{9}$/;
 
 export default function BookingModal({ car, dealerships, onClose }) {
   const { t, user } = useApp();
@@ -52,8 +53,8 @@ export default function BookingModal({ car, dealerships, onClose }) {
       <div style={modalStyle} onClick={e => e.stopPropagation()}>
         <button onClick={onClose} style={closeBtn}><X size={18} /></button>
         <div style={{ textAlign: 'center', padding: '40px 0' }}>
-          <div style={{ width: 80, height: 80, borderRadius: 20, background: 'rgba(59,130,246,0.1)', border: '1px solid rgba(59,130,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-            <LockKeyhole size={36} color="#3b82f6" />
+          <div style={{ width: 80, height: 80, borderRadius: 20, background: 'rgba(79,134,217,0.1)', border: '1px solid rgba(79,134,217,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+            <LockKeyhole size={36} color="var(--blue)" />
           </div>
           <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>{t.booking.login_required}</div>
           <a href="/login" style={primaryBtn}>{t.auth.sign_in}</a>
@@ -64,6 +65,15 @@ export default function BookingModal({ car, dealerships, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const nextErrors = {
+      ...(form.date ? {} : { date: 'Оберіть дату' }),
+      ...(form.time ? {} : { booking_datetime: 'Оберіть час' }),
+      ...(PHONE_RE.test(form.phone.trim()) ? {} : { phone: 'Введіть номер у форматі +380XXXXXXXXX' }),
+    };
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
+      return;
+    }
     setLoading(true); setErrors({});
     try {
       const dt = `${form.date}T${form.time}:00`;
@@ -71,7 +81,7 @@ export default function BookingModal({ car, dealerships, onClose }) {
         car: car.id,
         dealership: form.salon,
         booking_datetime: dt,
-        phone: form.phone,
+        phone: form.phone.trim(),
         comment: form.comment,
       });
       setSuccess(true);
@@ -128,8 +138,8 @@ export default function BookingModal({ car, dealerships, onClose }) {
       <div style={modalStyle} onClick={e => e.stopPropagation()}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(59,130,246,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Calendar size={20} color="#3b82f6" />
+            <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(79,134,217,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Calendar size={20} color="var(--blue)" />
             </div>
             <h2 style={{ fontWeight: 700, fontSize: 20 }}>{t.booking.title}</h2>
           </div>
@@ -161,7 +171,11 @@ export default function BookingModal({ car, dealerships, onClose }) {
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <div style={fieldStyle}>
               <label style={labelStyle}>Дата</label>
-              <input type="date" value={form.date} onChange={e => setForm(p => ({ ...p, date: e.target.value, time: '' }))} required style={inputStyle} min={todayStr} />
+              <DatePicker
+                value={form.date}
+                min={todayStr}
+                onChange={date => setForm(p => ({ ...p, date, time: '' }))}
+              />
               {fieldError('date')}
             </div>
             <div style={fieldStyle}>
@@ -179,7 +193,15 @@ export default function BookingModal({ car, dealerships, onClose }) {
 
           <div style={fieldStyle}>
             <label style={labelStyle}>{t.profile?.phone || 'Телефон'}</label>
-            <input type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} placeholder="+380 67 000 0000" style={inputStyle} />
+            <input
+              type="tel"
+              value={form.phone}
+              onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
+              placeholder="+380670000000"
+              required
+              pattern="^\+380[0-9]{9}$"
+              style={inputStyle}
+            />
             {fieldError('phone')}
           </div>
 
@@ -208,4 +230,135 @@ const closeBtn = { position: 'absolute', top: 16, right: 16, width: 32, height: 
 const fieldStyle = { marginBottom: 14 };
 const labelStyle = { display: 'block', fontSize: 13, color: 'var(--text2)', marginBottom: 6, fontWeight: 500 };
 const inputStyle = { width: '100%', padding: '11px 14px', background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)', fontSize: 14, outline: 'none' };
-const primaryBtn = { display: 'inline-flex', alignItems: 'center', padding: '12px 24px', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', borderRadius: 8, fontSize: 14, fontWeight: 600, border: 'none', boxShadow: '0 4px 12px rgba(59,130,246,0.3)', cursor: 'pointer' };
+const primaryBtn = { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minHeight: 44, padding: '12px 24px', background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', borderRadius: 8, fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' };
+
+const monthNames = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
+const weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
+
+function formatDisplayDate(value) {
+  if (!value) return '';
+  const [year, month, day] = value.split('-');
+  return `${day}.${month}.${year}`;
+}
+
+function toDateKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function getCalendarDays(year, month) {
+  const first = new Date(year, month, 1);
+  const start = new Date(first);
+  const offset = (first.getDay() + 6) % 7;
+  start.setDate(first.getDate() - offset);
+
+  return Array.from({ length: 42 }, (_, index) => {
+    const date = new Date(start);
+    date.setDate(start.getDate() + index);
+    return date;
+  });
+}
+
+function DatePicker({ value, min, onChange }) {
+  const [open, setOpen] = useState(false);
+  const selectedDate = value ? new Date(`${value}T00:00:00`) : null;
+  const [visibleMonth, setVisibleMonth] = useState(selectedDate || new Date());
+  const minKey = min || toDateKey(new Date());
+  const days = getCalendarDays(visibleMonth.getFullYear(), visibleMonth.getMonth());
+
+  const shiftMonth = (delta) => {
+    setVisibleMonth(prev => new Date(prev.getFullYear(), prev.getMonth() + delta, 1));
+  };
+
+  const selectDate = (date) => {
+    const key = toDateKey(date);
+    if (key < minKey) return;
+    onChange(key);
+    setVisibleMonth(date);
+    setOpen(false);
+  };
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        style={{ ...inputStyle, display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', textAlign: 'left' }}
+      >
+        <span style={{ color: value ? 'var(--text)' : 'var(--text3)' }}>
+          {value ? formatDisplayDate(value) : 'дд.мм.рррр'}
+        </span>
+        <Calendar size={16} color="var(--text3)" />
+      </button>
+
+      {open && (
+        <div style={{
+          position: 'absolute',
+          top: 'calc(100% + 6px)',
+          left: 0,
+          width: 272,
+          maxWidth: 'calc(100vw - 64px)',
+          padding: 10,
+          background: 'var(--bg2)',
+          border: '1px solid rgba(79,134,217,0.28)',
+          borderRadius: 12,
+          boxShadow: '0 20px 48px rgba(0,0,0,0.45)',
+          zIndex: 1200,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+            <button type="button" onClick={() => shiftMonth(-1)} aria-label="Попередній місяць" style={calendarNavBtn}>
+              <ChevronLeft size={16} />
+            </button>
+            <div style={{ fontWeight: 700, fontSize: 13 }}>
+              {monthNames[visibleMonth.getMonth()]} {visibleMonth.getFullYear()}
+            </div>
+            <button type="button" onClick={() => shiftMonth(1)} aria-label="Наступний місяць" style={calendarNavBtn}>
+              <ChevronRight size={16} />
+            </button>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3, marginBottom: 4 }}>
+            {weekDays.map(day => (
+              <div key={day} style={{ textAlign: 'center', fontSize: 10, fontWeight: 700, color: 'var(--text3)', padding: '2px 0' }}>{day}</div>
+            ))}
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 3 }}>
+            {days.map(date => {
+              const key = toDateKey(date);
+              const isCurrentMonth = date.getMonth() === visibleMonth.getMonth();
+              const isSelected = key === value;
+              const isToday = key === toDateKey(new Date());
+              const isDisabled = key < minKey;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  disabled={isDisabled}
+                  onClick={() => selectDate(date)}
+                  style={{
+                    height: 28,
+                    borderRadius: 7,
+                    border: isSelected ? '1px solid var(--blue-light)' : isToday ? '1px solid rgba(79,134,217,0.55)' : '1px solid transparent',
+                    background: isSelected ? 'var(--blue)' : isToday ? 'rgba(79,134,217,0.12)' : 'transparent',
+                    color: isDisabled ? 'var(--text3)' : isSelected ? '#fff' : isCurrentMonth ? 'var(--text)' : 'rgba(148,163,184,0.55)',
+                    fontSize: 12,
+                    fontWeight: isSelected || isToday ? 700 : 500,
+                    cursor: isDisabled ? 'not-allowed' : 'pointer',
+                    opacity: isDisabled ? 0.45 : 1,
+                  }}
+                >
+                  {date.getDate()}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const calendarNavBtn = { width: 28, height: 28, borderRadius: 7, border: '1px solid var(--border)', background: 'var(--bg3)', color: 'var(--text2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' };

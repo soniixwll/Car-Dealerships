@@ -7,6 +7,7 @@ class BookingSerializer(serializers.ModelSerializer):
     car_display = serializers.SerializerMethodField()
     dealership_name = serializers.CharField(source='dealership.name', read_only=True)
     status_display = serializers.CharField(source='get_status_display', read_only=True)
+    phone = serializers.CharField(required=True, allow_blank=False)
 
     class Meta:
         model = TestDriveBooking
@@ -21,6 +22,12 @@ class BookingSerializer(serializers.ModelSerializer):
         if value <= timezone.now():
             raise serializers.ValidationError('Дата запису має бути у майбутньому')
         return value
+
+    def validate_phone(self, value):
+        phone = value.strip()
+        if not phone.startswith('+380') or len(phone) != 13 or not phone[1:].isdigit():
+            raise serializers.ValidationError('Введіть номер у форматі +380XXXXXXXXX')
+        return phone
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user

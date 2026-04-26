@@ -22,9 +22,9 @@ export default function Compare() {
       <div style={{ width: 96, height: 96, borderRadius: 24, background: 'var(--card)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
         <Scale size={48} color="var(--text3)" />
       </div>
-      <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 10 }}>{t.compare.empty}</h2>
+      <h2 style={{ fontSize: 26, fontWeight: 650, marginBottom: 10 }}>{t.compare.empty}</h2>
       <p style={{ color: 'var(--text2)', marginBottom: 28 }}>{t.compare.empty_sub}</p>
-      <Link to="/catalog" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '14px 28px', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', borderRadius: 100, fontSize: 15, fontWeight: 600 }}>
+      <Link to="/catalog" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '14px 28px', background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', borderRadius: 100, fontSize: 15, fontWeight: 600 }}>
         {t.compare.go_catalog} <ArrowRight size={16} />
       </Link>
     </div>
@@ -34,7 +34,7 @@ export default function Compare() {
     <div style={{ maxWidth: 1280, margin: '0 auto', padding: '40px 24px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32 }}>
         <div>
-          <h1 style={{ fontSize: 32, fontWeight: 800 }}>{t.compare.title}</h1>
+          <h1 style={{ fontSize: 28, fontWeight: 650 }}>{t.compare.title}</h1>
           <p style={{ color: 'var(--text2)', marginTop: 4 }}>{t.compare.sub}</p>
         </div>
         <Link to="/catalog" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '10px 20px', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 100, fontSize: 14, fontWeight: 500, color: 'var(--text2)' }}>
@@ -56,9 +56,9 @@ export default function Compare() {
                 <div style={{ height: 120, borderRadius: 10, overflow: 'hidden', background: 'var(--bg3)', marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {img ? <img src={`http://127.0.0.1:8000${img.image}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Car size={36} color="var(--text3)" />}
                 </div>
-                <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 2 }}>{car.brand_name} {car.model_name}</div>
-                <div style={{ fontSize: 20, fontWeight: 800, color: '#3b82f6', marginBottom: 8 }}>${Math.round(parseFloat(car.price_uah) / 41).toLocaleString()}</div>
-                <Link to={`/cars/${car.id}`} style={{ display: 'block', textAlign: 'center', padding: '8px', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', borderRadius: 8, fontSize: 13, fontWeight: 600 }}>
+                <div style={{ fontWeight: 650, fontSize: 15, marginBottom: 2 }}>{car.brand_name} {car.model_name}</div>
+                <div style={{ fontSize: 18, fontWeight: 650, color: 'var(--blue)', marginBottom: 8 }}>${Math.round(parseFloat(car.price_uah) / 41).toLocaleString()}</div>
+                <Link to={`/cars/${car.id}`} style={{ display: 'block', textAlign: 'center', padding: '8px', background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', borderRadius: 8, fontSize: 13, fontWeight: 600 }}>
                   {t.compare.view_details}
                 </Link>
               </div>
@@ -74,10 +74,10 @@ export default function Compare() {
             <div key={key} style={{ display: 'grid', gridTemplateColumns: `200px repeat(${compareList.length}, 1fr)`, borderBottom: '1px solid var(--border)' }}>
               <div style={{ padding: '14px 20px', background: 'var(--bg3)', fontSize: 13, fontWeight: 600, color: 'var(--text2)', display: 'flex', alignItems: 'center' }}>
                 {label}
-                {!allSame && <span style={{ marginLeft: 8, fontSize: 11, color: '#3b82f6', background: 'rgba(59,130,246,0.1)', padding: '2px 6px', borderRadius: 4 }}>{t.compare.different}</span>}
+                {!allSame && <span style={{ marginLeft: 8, fontSize: 11, color: 'var(--blue)', background: 'rgba(79,134,217,0.1)', padding: '2px 6px', borderRadius: 4 }}>{t.compare.different}</span>}
               </div>
               {compareList.map((car, i) => (
-                <div key={car.id} style={{ padding: '14px 20px', borderLeft: '1px solid var(--border)', fontSize: 14, fontWeight: 500, background: !allSame ? 'rgba(59,130,246,0.03)' : 'transparent', display: 'flex', alignItems: 'center' }}>
+                <div key={car.id} style={{ padding: '14px 20px', borderLeft: '1px solid var(--border)', fontSize: 14, fontWeight: 500, background: !allSame ? 'rgba(79,134,217,0.04)' : 'transparent', display: 'flex', alignItems: 'center' }}>
                   {values[i]}
                 </div>
               ))}

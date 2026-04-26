@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, GitCompare, Eye } from 'lucide-react';
+import { Heart, GitCompare } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 export default function CarCard({ car }) {
@@ -29,9 +29,9 @@ export default function CarCard({ car }) {
     : null;
 
   return (
-    <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden', transition: 'transform .2s, box-shadow .2s', cursor: 'pointer' }}
-      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(0,0,0,0.4)'; }}
-      onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
+    <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden', transition: 'transform .2s', cursor: 'pointer' }}
+      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
+      onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}>
 
       {/* Image */}
       <div style={{ position: 'relative', height: 200, overflow: 'hidden', background: 'var(--bg3)' }}>
@@ -55,7 +55,7 @@ export default function CarCard({ car }) {
 
       {/* Body */}
       <div style={{ padding: 18 }}>
-        <div style={{ fontWeight: 700, fontSize: 17, marginBottom: 2 }}>{car.brand_name} {car.model_name}</div>
+        <div style={{ fontWeight: 650, fontSize: 16, marginBottom: 2 }}>{car.brand_name} {car.model_name}</div>
         <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 12 }}>{car.dealership_name} · {car.year}</div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
@@ -64,14 +64,14 @@ export default function CarCard({ car }) {
           ))}
         </div>
 
-        <div style={{ fontSize: 22, fontWeight: 800, color: '#3b82f6', marginBottom: 14 }}>{priceDisplay}</div>
+        <div style={{ fontSize: 20, fontWeight: 650, color: 'var(--blue)', marginBottom: 14, letterSpacing: 0 }}>{priceDisplay}</div>
 
         <div style={{ display: 'flex', gap: 8 }}>
-          <Link to={`/cars/${car.id}`} style={{ flex: 1, padding: '10px 0', textAlign: 'center', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', borderRadius: 8, fontSize: 14, fontWeight: 600, border: 'none', boxShadow: '0 4px 12px rgba(59,130,246,0.3)' }}>
+          <Link to={`/cars/${car.id}`} style={{ flex: 1, minHeight: 40, padding: '10px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', borderRadius: 8, fontSize: 14, fontWeight: 600, border: 'none', whiteSpace: 'nowrap' }}>
             {t.catalog.view}
           </Link>
-          <button onClick={() => toggleCompare(car)} style={{ width: 40, height: 40, borderRadius: 8, background: inComp ? 'rgba(59,130,246,0.15)' : 'var(--bg3)', border: `1px solid ${inComp ? '#3b82f6' : 'var(--border)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <GitCompare size={16} color={inComp ? '#3b82f6' : 'var(--text2)'} />
+          <button onClick={() => toggleCompare(car)} style={{ width: 40, height: 40, borderRadius: 8, background: inComp ? 'rgba(79,134,217,0.15)' : 'var(--bg3)', border: `1px solid ${inComp ? 'var(--blue)' : 'var(--border)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <GitCompare size={16} color={inComp ? 'var(--blue)' : 'var(--text2)'} />
           </button>
         </div>
       </div>

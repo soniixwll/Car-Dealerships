@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Calendar, Eye, Settings, Trash2, Car, X, MapPin, Check, LogOut } from 'lucide-react';
+import { Heart, Calendar, Eye, Settings, Car, MapPin, Check, LogOut } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { getBookings, deleteBooking, getProfile, updateProfile } from '../services/api';
 import CarCard from '../components/CarCard';
 
 export default function Profile() {
-  const { t, user, favorites, toggleFavorite, recentlyViewed, logout } = useApp();
+  const { t, user, favorites, recentlyViewed, logout } = useApp();
   const navigate = useNavigate();
   const [tab, setTab] = useState('favorites');
   const [bookings, setBookings] = useState([]);
@@ -47,14 +47,14 @@ export default function Profile() {
   return (
     <div style={{ maxWidth: 1280, margin: '0 auto', padding: '40px 24px' }}>
       <div style={{ marginBottom: 32 }}>
-        <h1 style={{ fontSize: 32, fontWeight: 800 }}>{t.profile.title}</h1>
+        <h1 style={{ fontSize: 30, fontWeight: 650 }}>{t.profile.title}</h1>
         <p style={{ color: 'var(--text2)', marginTop: 4 }}>{t.profile.sub}</p>
       </div>
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 4, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, padding: 4, width: 'fit-content', maxWidth: '100%', overflowX: 'auto', marginBottom: 32 }}>
         {tabs.map(({ key, label, Icon }) => (
-          <button key={key} onClick={() => setTab(key)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 18px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 500, transition: '.15s', background: tab === key ? 'linear-gradient(135deg,#1d4ed8,#3b82f6)' : 'transparent', color: tab === key ? '#fff' : 'var(--text2)' }}>
+          <button key={key} onClick={() => setTab(key)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 18px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 500, transition: '.15s', background: tab === key ? 'linear-gradient(135deg,var(--blue-hover),var(--blue))' : 'transparent', color: tab === key ? '#fff' : 'var(--text2)' }}>
             <Icon size={16} /> {label}
           </button>
         ))}
@@ -69,7 +69,7 @@ export default function Profile() {
               <Heart size={48} color="var(--text3)" style={{ marginBottom: 16 }} />
               <div style={{ fontWeight: 600, fontSize: 16, marginBottom: 8 }}>{t.profile.no_favorites}</div>
               <div style={{ marginBottom: 20 }}>{t.profile.no_favorites_sub}</div>
-              <Link to="/catalog" style={{ padding: '12px 24px', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', borderRadius: 100, fontSize: 14, fontWeight: 600 }}>
+              <Link to="/catalog" style={{ padding: '12px 24px', background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', borderRadius: 100, fontSize: 14, fontWeight: 600 }}>
                 {t.home?.view_all || 'Browse Catalog'}
               </Link>
             </div>
@@ -89,7 +89,7 @@ export default function Profile() {
             <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text2)' }}>
               <Calendar size={48} color="var(--text3)" style={{ marginBottom: 16 }} />
               <div style={{ fontWeight: 600, marginBottom: 20 }}>{t.profile.no_requests}</div>
-              <Link to="/catalog" style={{ padding: '12px 24px', background: 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', borderRadius: 100, fontSize: 14, fontWeight: 600 }}>
+              <Link to="/catalog" style={{ padding: '12px 24px', background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', borderRadius: 100, fontSize: 14, fontWeight: 600 }}>
                 {t.home?.view_all || 'Browse'}
               </Link>
             </div>
@@ -158,7 +158,7 @@ export default function Profile() {
                 <label style={{ display: 'block', fontSize: 13, color: 'var(--text2)', marginBottom: 6, fontWeight: 500 }}>{t.profile.phone}</label>
                 <input value={profile.phone} onChange={e => setProfile(p => ({ ...p, phone: e.target.value }))} style={{ width: '100%', padding: '12px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)', fontSize: 15, outline: 'none' }} />
               </div>
-              <button type="submit" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '12px 24px', background: saved ? '#22c55e' : 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
+              <button type="submit" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '12px 24px', background: saved ? '#22c55e' : 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
                 {saved && <Check size={16} />}
                 {saved ? 'Збережено!' : t.profile.save}
               </button>

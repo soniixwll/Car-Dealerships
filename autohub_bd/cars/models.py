@@ -139,4 +139,4 @@ class Favorite(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f'{self.user.email} ♥ {self.car}'
+        return f'{self.user.email} favorite {self.car}'

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, Calendar, Eye, Settings, Trash2, Car, X } from 'lucide-react';
+import { Heart, Calendar, Eye, Settings, Trash2, Car, X, MapPin, Check, LogOut } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { getBookings, deleteBooking, getProfile, updateProfile } from '../services/api';
 import CarCard from '../components/CarCard';
@@ -100,8 +100,12 @@ export default function Profile() {
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 2 }}>{b.car_display}</div>
-                <div style={{ fontSize: 13, color: 'var(--text2)', marginBottom: 4 }}>📅 {new Date(b.booking_datetime).toLocaleString('uk-UA')}</div>
-                <div style={{ fontSize: 13, color: 'var(--text2)', marginBottom: 6 }}>📍 {b.dealership_name}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--text2)', marginBottom: 4 }}>
+                  <Calendar size={13} /> {new Date(b.booking_datetime).toLocaleString('uk-UA')}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--text2)', marginBottom: 6 }}>
+                  <MapPin size={13} /> {b.dealership_name}
+                </div>
                 <span style={{ fontSize: 12, fontWeight: 600, padding: '3px 10px', borderRadius: 100, background: `${statusColor[b.status]}20`, color: statusColor[b.status] }}>
                   {statusLabel[b.status]}
                 </span>
@@ -154,13 +158,14 @@ export default function Profile() {
                 <label style={{ display: 'block', fontSize: 13, color: 'var(--text2)', marginBottom: 6, fontWeight: 500 }}>{t.profile.phone}</label>
                 <input value={profile.phone} onChange={e => setProfile(p => ({ ...p, phone: e.target.value }))} style={{ width: '100%', padding: '12px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)', fontSize: 15, outline: 'none' }} />
               </div>
-              <button type="submit" style={{ padding: '12px 24px', background: saved ? '#22c55e' : 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
-                {saved ? '✓ Збережено!' : t.profile.save}
+              <button type="submit" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '12px 24px', background: saved ? '#22c55e' : 'linear-gradient(135deg,#1d4ed8,#3b82f6)', color: '#fff', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
+                {saved && <Check size={16} />}
+                {saved ? 'Збережено!' : t.profile.save}
               </button>
             </form>
           </div>
-          <button onClick={() => { logout(); navigate('/'); }} style={{ padding: '12px 24px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, color: '#ef4444', fontSize: 14, fontWeight: 500, cursor: 'pointer' }}>
-            🚪 {t.nav.logout}
+          <button onClick={() => { logout(); navigate('/'); }} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '12px 24px', background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, color: '#ef4444', fontSize: 14, fontWeight: 500, cursor: 'pointer' }}>
+            <LogOut size={16} /> {t.nav.logout}
           </button>
         </div>
       )}

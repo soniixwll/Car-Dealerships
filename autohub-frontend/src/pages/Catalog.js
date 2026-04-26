@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { SlidersHorizontal, RotateCcw, X, Search, ChevronUp, ChevronDown } from 'lucide-react';
+import { SlidersHorizontal, RotateCcw, X, Search, ChevronUp, ChevronDown, Check } from 'lucide-react';
 import CustomSelect from '../components/CustomSelect';
 import { useApp } from '../context/AppContext';
 import { getCars, getBrands } from '../services/api';
@@ -101,12 +101,38 @@ export default function Catalog() {
             <div style={{ marginBottom: 24 }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text2)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '.5px' }}>{t.catalog.brand}</div>
               <div style={{ maxHeight: 220, overflowY: 'auto' }}>
-                {brands.map(b => (
-                  <label key={b.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', cursor: 'pointer', fontSize: 14, color: filters.selectedBrands.includes(b.name) ? '#3b82f6' : 'var(--text)' }}>
-                    <input type="checkbox" checked={filters.selectedBrands.includes(b.name)} onChange={() => toggleBrand(b.name)} style={{ accentColor: '#3b82f6', width: 16, height: 16 }} />
-                    {b.name}
-                  </label>
-                ))}
+                {brands.map(b => {
+                  const checked = filters.selectedBrands.includes(b.name);
+                  return (
+                    <label key={b.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', cursor: 'pointer', fontSize: 14, color: checked ? '#3b82f6' : 'var(--text)' }}>
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggleBrand(b.name)}
+                        style={{ position: 'absolute', opacity: 0, width: 1, height: 1, pointerEvents: 'none' }}
+                      />
+                      <span
+                        aria-hidden="true"
+                        style={{
+                          width: 18,
+                          height: 18,
+                          borderRadius: 5,
+                          flexShrink: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: checked ? '#3b82f6' : 'var(--bg)',
+                          border: `1px solid ${checked ? '#60a5fa' : 'rgba(148,163,184,0.45)'}`,
+                          boxShadow: checked ? '0 0 0 3px rgba(59,130,246,0.18)' : 'inset 0 1px 0 rgba(255,255,255,0.04)',
+                          transition: 'background .15s, border-color .15s, box-shadow .15s',
+                        }}
+                      >
+                        {checked && <Check size={13} strokeWidth={3} color="#fff" />}
+                      </span>
+                      <span>{b.name}</span>
+                    </label>
+                  );
+                })}
               </div>
             </div>
 

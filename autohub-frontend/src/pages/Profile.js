@@ -4,9 +4,10 @@ import { Heart, Calendar, Eye, Settings, Car, MapPin, Check, LogOut } from 'luci
 import { useApp } from '../context/AppContext';
 import { getBookings, deleteBooking, getProfile, updateProfile } from '../services/api';
 import CarCard from '../components/CarCard';
+import { localizeSalonName } from '../i18n';
 
 export default function Profile() {
-  const { t, user, favorites, recentlyViewed, logout } = useApp();
+  const { t, lang, user, favorites, recentlyViewed, logout } = useApp();
   const navigate = useNavigate();
   const [tab, setTab] = useState('favorites');
   const [bookings, setBookings] = useState([]);
@@ -51,7 +52,6 @@ export default function Profile() {
         <p style={{ color: 'var(--text2)', marginTop: 4 }}>{t.profile.sub}</p>
       </div>
 
-      {/* Tabs */}
       <div style={{ display: 'flex', gap: 4, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, padding: 4, width: 'fit-content', maxWidth: '100%', overflowX: 'auto', marginBottom: 32 }}>
         {tabs.map(({ key, label, Icon }) => (
           <button key={key} onClick={() => setTab(key)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 18px', borderRadius: 8, border: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 500, transition: '.15s', background: tab === key ? 'linear-gradient(135deg,var(--blue-hover),var(--blue))' : 'transparent', color: tab === key ? '#fff' : 'var(--text2)' }}>
@@ -60,7 +60,6 @@ export default function Profile() {
         ))}
       </div>
 
-      {/* FAVORITES */}
       {tab === 'favorites' && (
         <div>
           <h3 style={{ fontWeight: 700, fontSize: 18, marginBottom: 20 }}>{t.profile.favorite_cars}</h3>
@@ -81,7 +80,6 @@ export default function Profile() {
         </div>
       )}
 
-      {/* TEST DRIVES */}
       {tab === 'test_drives' && (
         <div>
           <h3 style={{ fontWeight: 700, fontSize: 18, marginBottom: 20 }}>{t.profile.test_drive_requests}</h3>
@@ -101,10 +99,10 @@ export default function Profile() {
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 2 }}>{b.car_display}</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--text2)', marginBottom: 4 }}>
-                  <Calendar size={13} /> {new Date(b.booking_datetime).toLocaleString('uk-UA')}
+                  <Calendar size={13} /> {new Date(b.booking_datetime).toLocaleString(lang === 'en' ? 'en-GB' : 'uk-UA')}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--text2)', marginBottom: 6 }}>
-                  <MapPin size={13} /> {b.dealership_name}
+                  <MapPin size={13} /> {localizeSalonName(b.dealership_name, lang)}
                 </div>
                 <span style={{ fontSize: 12, fontWeight: 600, padding: '3px 10px', borderRadius: 100, background: `${statusColor[b.status]}20`, color: statusColor[b.status] }}>
                   {statusLabel[b.status]}
@@ -123,7 +121,6 @@ export default function Profile() {
         </div>
       )}
 
-      {/* RECENTLY VIEWED */}
       {tab === 'recently_viewed' && (
         <div>
           <h3 style={{ fontWeight: 700, fontSize: 18, marginBottom: 20 }}>{t.profile.recently_viewed_cars}</h3>
@@ -140,7 +137,6 @@ export default function Profile() {
         </div>
       )}
 
-      {/* SETTINGS */}
       {tab === 'settings' && (
         <div style={{ maxWidth: 520 }}>
           <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: 28, marginBottom: 20 }}>
@@ -160,7 +156,7 @@ export default function Profile() {
               </div>
               <button type="submit" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '12px 24px', background: saved ? '#22c55e' : 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', border: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
                 {saved && <Check size={16} />}
-                {saved ? 'Збережено!' : t.profile.save}
+                {saved ? t.profile.saved : t.profile.save}
               </button>
             </form>
           </div>

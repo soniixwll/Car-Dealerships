@@ -1,7 +1,49 @@
-from rest_framework import viewsets, permissions, decorators, response, mixins
+from functools import reduce
+import operator
+import unicodedata
+
+from rest_framework import viewsets, permissions, decorators, response, mixins, filters
+from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Q, Value
+from django.db.models.functions import Replace
+
 from .models import Brand, Car, Favorite
 from .serializers import BrandSerializer, CarListSerializer, CarDetailSerializer, FavoriteSerializer
 from .filters import CarFilter
+
+
+def _deaccent(s):
+    return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
+
+
+class DeaccentSearchFilter(filters.SearchFilter):
+    """SearchFilter that also matches diacritic-insensitive forms (e.g. 'Skoda' → 'Škoda')."""
+
+    def filter_queryset(self, request, queryset, view):
+        terms = self.get_search_terms(request)
+        search_fields = self.get_search_fields(view, request)
+        if not terms or not search_fields:
+            return queryset
+
+        qs = queryset.annotate(
+            _brand_ascii=Replace(
+                Replace('generation__car_model__brand__name', Value('Š'), Value('S')),
+                Value('š'), Value('s'),
+            ),
+            _model_ascii=Replace(
+                Replace('generation__car_model__name', Value('Š'), Value('S')),
+                Value('š'), Value('s'),
+            ),
+        )
+
+        conds = []
+        for term in terms:
+            t = _deaccent(term)
+            term_q = Q(_brand_ascii__icontains=t) | Q(_model_ascii__icontains=t)
+            for field in search_fields:
+                term_q |= Q(**{f'{field}__icontains': term})
+            conds.append(term_q)
+        return qs.filter(reduce(operator.and_, conds))
 
 
 class BrandViewSet(viewsets.ReadOnlyModelViewSet):
@@ -14,7 +56,8 @@ class CarViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Car.objects.select_related('generation__car_model__brand', 'dealership').prefetch_related('images')
     permission_classes = (permissions.AllowAny,)
     filterset_class = CarFilter
-    search_fields = ['generation__car_model__brand__name', 'generation__car_model__name', 'color']
+    filter_backends = [DjangoFilterBackend, DeaccentSearchFilter, filters.OrderingFilter]
+    search_fields = ['color']
     ordering_fields = ['price_uah', 'year', 'mileage_km', 'created_at']
     ordering = ['-created_at']
 

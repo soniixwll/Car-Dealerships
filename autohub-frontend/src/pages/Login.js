@@ -22,7 +22,7 @@ export default function Login() {
       login({ email: r.data.email, username: r.data.username, role: r.data.role }, r.data.access);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Невірний email або пароль');
+      setError(err.response?.data?.detail || t.auth.invalid_creds);
     } finally { setLoading(false); }
   };
 
@@ -33,31 +33,13 @@ export default function Login() {
       login({ email: r.data.email, username: r.data.username, role: r.data.role }, r.data.access);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Не вдалось увійти через Google');
+      setError(err.response?.data?.detail || t.auth.google_failed);
     }
   };
-
-//   const handleLogin = async () => {
-//   const res = await fetch('http://127.0.0.1:8000/api/auth/login/', {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json'
-//     },
-//     body: JSON.stringify({
-//       email,
-//       password
-//     })
-//   })
-
-//   const data = await res.json()
-
-//   localStorage.setItem('token', data.access)
-// }
 
   return (
     <div style={{ minHeight: 'calc(100vh - 68px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div style={{ width: '100%', maxWidth: 440, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 20, padding: 40 }}>
-        {/* Icon */}
         <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(79,134,217,0.15)', border: '1px solid rgba(79,134,217,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" strokeWidth="2"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/><circle cx="12" cy="21" r="1"/><circle cx="20" cy="21" r="1"/></svg>
         </div>
@@ -93,7 +75,7 @@ export default function Login() {
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
-            onError={() => setError('Не вдалось увійти через Google')}
+            onError={() => setError(t.auth.google_failed)}
             theme="filled_blue"
             shape="pill"
             text="signin_with"

@@ -119,7 +119,8 @@ class Car(models.Model):
 
 class CarImage(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='cars/')
+    image = models.ImageField(upload_to='cars/', blank=True, null=True)
+    external_url = models.URLField(blank=True, max_length=500)
     is_main = models.BooleanField(default=False)
     order = models.PositiveSmallIntegerField(default=0)
 

@@ -35,7 +35,7 @@ export default function Catalog() {
   useEffect(() => {
     setLoading(true);
     const params = { ordering: filters.ordering };
-    if (filters.selectedBrands.length === 1) params.brand = filters.selectedBrands[0];
+    if (filters.selectedBrands.length) params.brand = filters.selectedBrands.join(',');
     if (filters.price_min) params.price_min = filters.price_min;
     if (filters.price_max) params.price_max = filters.price_max;
     if (filters.year_min) params.year_min = filters.year_min;
@@ -78,7 +78,6 @@ export default function Catalog() {
       )}
 
       <div style={{ display: 'flex', gap: 28 }}>
-        {/* SIDEBAR */}
         <aside style={sidebarOuter} aria-hidden={sidebarFloating && !filtersOpen}>
           <div style={sidebarInner}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
@@ -97,7 +96,6 @@ export default function Catalog() {
               </div>
             </div>
 
-            {/* Brands */}
             <div style={{ marginBottom: 24 }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text2)', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '.5px' }}>{t.catalog.brand}</div>
               <div style={{ maxHeight: 220, overflowY: 'auto' }}>
@@ -135,7 +133,6 @@ export default function Catalog() {
               </div>
             </div>
 
-            {/* Price */}
             <div style={{ marginBottom: 24 }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text2)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '.5px' }}>{t.catalog.price_range}</div>
               <div style={{ display: 'flex', gap: 8 }}>
@@ -144,36 +141,33 @@ export default function Catalog() {
               </div>
               <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
                 <button onClick={applyPrice} style={{ flex: 1, padding: '8px 12px', background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', border: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
-                  {t.catalog.apply || 'Застосувати'}
+                  {t.catalog.apply}
                 </button>
                 {(filters.price_min || filters.price_max) && (
                   <button onClick={clearPrice} aria-label="Clear price" style={{ padding: '8px 12px', background: 'var(--bg3)', color: 'var(--text2)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 13, cursor: 'pointer' }}>×</button>
                 )}
               </div>
-              <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 6 }}>Ціна в грн</div>
+              <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 6 }}>{t.catalog.price_hint}</div>
             </div>
 
-            {/* Year */}
             <div style={{ marginBottom: 24 }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text2)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '.5px' }}>{t.catalog.year}</div>
               <div style={{ display: 'flex', gap: 8 }}>
-                <input type="number" placeholder="Від" value={filters.year_min} onChange={e => setFilters(p => ({ ...p, year_min: e.target.value }))} style={inputS} />
-                <input type="number" placeholder="До" value={filters.year_max} onChange={e => setFilters(p => ({ ...p, year_max: e.target.value }))} style={inputS} />
+                <input type="number" placeholder={t.catalog.from} value={filters.year_min} onChange={e => setFilters(p => ({ ...p, year_min: e.target.value }))} style={inputS} />
+                <input type="number" placeholder={t.catalog.to} value={filters.year_max} onChange={e => setFilters(p => ({ ...p, year_max: e.target.value }))} style={inputS} />
               </div>
             </div>
 
-            {/* Mileage */}
             <div style={{ marginBottom: 8 }}>
-              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text2)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '.5px' }}>{t.catalog.mileage} (макс. км)</div>
-              <input type="number" placeholder="Напр. 100000" value={filters.mileage_max} onChange={e => setFilters(p => ({ ...p, mileage_max: e.target.value }))} style={{ ...inputS, width: '100%' }} />
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text2)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '.5px' }}>{t.catalog.mileage}</div>
+              <input type="number" placeholder={t.catalog.mileage_placeholder} value={filters.mileage_max} onChange={e => setFilters(p => ({ ...p, mileage_max: e.target.value }))} style={{ ...inputS, width: '100%' }} />
             </div>
           </div>
         </aside>
 
-        {/* MAIN */}
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-            <div style={{ fontSize: 14, color: 'var(--text2)' }}>Знайдено: <strong style={{ color: 'var(--text)' }}>{total}</strong> авто</div>
+            <div style={{ fontSize: 14, color: 'var(--text2)' }}>{t.catalog.found}: <strong style={{ color: 'var(--text)' }}>{total}</strong> {t.catalog.cars_label}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <span style={{ fontSize: 14, color: 'var(--text2)' }}>{t.catalog.sort}:</span>
               <CustomSelect
@@ -200,8 +194,8 @@ export default function Catalog() {
               <div style={{ width: 80, height: 80, borderRadius: 20, background: 'var(--card)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
                 <Search size={36} color="var(--text3)" />
               </div>
-              <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8, color: 'var(--text)' }}>Нічого не знайдено</div>
-              <div>Спробуйте змінити фільтри</div>
+              <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 8, color: 'var(--text)' }}>{t.catalog.nothing_found}</div>
+              <div>{t.catalog.try_change}</div>
             </div>
           ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 20 }}>

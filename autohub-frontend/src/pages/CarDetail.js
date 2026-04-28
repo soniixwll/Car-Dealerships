@@ -4,10 +4,11 @@ import { Heart, GitCompare, Calendar, MapPin, Phone, ChevronRight } from 'lucide
 import { useApp } from '../context/AppContext';
 import { getCar, calculateCost, getDealerships } from '../services/api';
 import BookingModal from '../components/BookingModal';
+import { localizeSalonName, localizeAddress } from '../i18n';
 
 export default function CarDetail() {
   const { id } = useParams();
-  const { t, toggleFavorite, isFavorite, toggleCompare, isInCompare, addRecentlyViewed } = useApp();
+  const { t, lang, toggleFavorite, isFavorite, toggleCompare, isInCompare, addRecentlyViewed } = useApp();
   const [car, setCar] = useState(null);
   const [dealerships, setDealerships] = useState([]);
   const [activeImg, setActiveImg] = useState(0);
@@ -30,8 +31,8 @@ export default function CarDetail() {
     return () => clearTimeout(t);
   }, [car, calc.monthly_km]);
 
-  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh', color: 'var(--text2)' }}>Завантаження...</div>;
-  if (!car) return <div style={{ textAlign: 'center', padding: '100px 24px' }}>Авто не знайдено</div>;
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '60vh', color: 'var(--text2)' }}>{t.car.loading}</div>;
+  if (!car) return <div style={{ textAlign: 'center', padding: '100px 24px' }}>{t.car.not_found}</div>;
 
   const priceUSD = Math.round(parseFloat(car.price_uah) / 41);
   const images = car.images || [];
@@ -50,19 +51,16 @@ export default function CarDetail() {
 
   return (
     <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 24px' }}>
-      {/* Breadcrumb */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--text3)', marginBottom: 24 }}>
-        <Link to="/" style={{ color: 'var(--text3)' }}>Головна</Link>
+        <Link to="/" style={{ color: 'var(--text3)' }}>{t.nav.home}</Link>
         <ChevronRight size={14} />
-        <Link to="/catalog" style={{ color: 'var(--text3)' }}>Каталог</Link>
+        <Link to="/catalog" style={{ color: 'var(--text3)' }}>{t.nav.catalog}</Link>
         <ChevronRight size={14} />
         <span style={{ color: 'var(--text)' }}>{car.brand_name} {car.model_name}</span>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: 32 }}>
-        {/* LEFT */}
         <div>
-          {/* Gallery */}
           <div style={{ borderRadius: 16, overflow: 'hidden', background: 'var(--bg3)', aspectRatio: '16/9', marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {images.length > 0 ? (
               <img src={images[activeImg]?.image} alt={car.brand_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -80,7 +78,6 @@ export default function CarDetail() {
             </div>
           )}
 
-          {/* Specs */}
           <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24, marginTop: 24 }}>
             <h3 style={{ fontWeight: 700, fontSize: 18, marginBottom: 20 }}>{t.car.specifications}</h3>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0 }}>
@@ -99,7 +96,6 @@ export default function CarDetail() {
             </div>
           </div>
 
-          {/* Calculator */}
           <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24, marginTop: 24 }}>
             <h3 style={{ fontWeight: 700, fontSize: 18, marginBottom: 20 }}>{t.car.calculator}</h3>
             <div style={{ marginBottom: 16 }}>
@@ -109,9 +105,9 @@ export default function CarDetail() {
             {calc.result && (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 {[
-                  [t.car.fuel_cost, `$${Math.round(calc.result.breakdown.fuel_monthly / 41)}/міс`],
-                  [t.car.maintenance, `$${Math.round(calc.result.breakdown.maintenance_monthly / 41)}/міс`],
-                  [t.car.taxes, `$${Math.round(calc.result.breakdown.tax_monthly / 41)}/міс`],
+                  [t.car.fuel_cost, `$${Math.round(calc.result.breakdown.fuel_monthly / 41)}${t.car.per_month}`],
+                  [t.car.maintenance, `$${Math.round(calc.result.breakdown.maintenance_monthly / 41)}${t.car.per_month}`],
+                  [t.car.taxes, `$${Math.round(calc.result.breakdown.tax_monthly / 41)}${t.car.per_month}`],
                 ].map(([label, val]) => (
                   <div key={label} style={{ background: 'var(--bg)', borderRadius: 10, padding: '12px 14px', border: '1px solid var(--border)' }}>
                     <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '.5px' }}>{label}</div>
@@ -133,7 +129,6 @@ export default function CarDetail() {
           </div>
         </div>
 
-        {/* RIGHT */}
         <div style={{ position: 'sticky', top: 88, height: 'fit-content' }}>
           <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24 }}>
             <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
@@ -150,7 +145,7 @@ export default function CarDetail() {
             <div style={{ padding: '16px 0', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', marginBottom: 20 }}>
               <div style={{ fontSize: 13, color: 'var(--text3)', marginBottom: 4 }}>{t.car.price}</div>
               <div style={{ fontSize: 30, fontWeight: 650, color: 'var(--blue)', letterSpacing: 0 }}>${priceUSD.toLocaleString()}</div>
-              <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 4 }}>{Math.round(car.price_uah).toLocaleString()} грн</div>
+              <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 4 }}>{Math.round(car.price_uah).toLocaleString()} {t.car.uah_suffix}</div>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 20 }}>
@@ -165,12 +160,11 @@ export default function CarDetail() {
               </button>
             </div>
 
-            {/* Salon info */}
             <div style={{ background: 'var(--bg3)', borderRadius: 12, padding: 16 }}>
               <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12, color: 'var(--text2)' }}>{t.car.available_at}</div>
-              <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>{car.dealership_name}</div>
+              <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 8 }}>{localizeSalonName(car.dealership_name, lang)}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                {car.dealership_address && <div style={{ display: 'flex', gap: 6, fontSize: 13, color: 'var(--text2)' }}><MapPin size={14} style={{ flexShrink: 0, marginTop: 1 }} color="var(--text3)" />{car.dealership_address}</div>}
+                {car.dealership_address && <div style={{ display: 'flex', gap: 6, fontSize: 13, color: 'var(--text2)' }}><MapPin size={14} style={{ flexShrink: 0, marginTop: 1 }} color="var(--text3)" />{localizeAddress(car.dealership_address, lang)}</div>}
                 {car.dealership_phone && <div style={{ display: 'flex', gap: 6, fontSize: 13, color: 'var(--text2)' }}><Phone size={14} style={{ flexShrink: 0, marginTop: 1 }} color="var(--text3)" />{car.dealership_phone}</div>}
               </div>
               <Link to="/salons" style={{ display: 'block', textAlign: 'center', marginTop: 12, fontSize: 13, color: 'var(--blue)', fontWeight: 500 }}>{t.car.view_salon} →</Link>

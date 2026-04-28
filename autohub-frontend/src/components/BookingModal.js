@@ -4,6 +4,7 @@ import { X, Calendar, CheckCircle2, LockKeyhole, Car, ChevronLeft, ChevronRight 
 import CustomSelect from './CustomSelect';
 import { useApp } from '../context/AppContext';
 import { createBooking, getProfile, getAvailability } from '../services/api';
+import { localizeSalonName } from '../i18n';
 
 const TIME_SLOTS = (() => {
   const slots = [];
@@ -16,7 +17,7 @@ const TIME_SLOTS = (() => {
 const PHONE_RE = /^\+380\d{9}$/;
 
 export default function BookingModal({ car, dealerships, onClose }) {
-  const { t, user } = useApp();
+  const { t, lang, user } = useApp();
   const navigate = useNavigate();
   const [form, setForm] = useState({
     salon: car.dealership || (dealerships[0] && dealerships[0].id) || '',
@@ -30,7 +31,6 @@ export default function BookingModal({ car, dealerships, onClose }) {
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // Pre-fill phone from user profile if not present in user object
   useEffect(() => {
     if (user && !form.phone) {
       getProfile().then(r => {
@@ -40,7 +40,6 @@ export default function BookingModal({ car, dealerships, onClose }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Fetch taken time slots whenever date changes
   useEffect(() => {
     if (!form.date) { setTakenTimes([]); return; }
     getAvailability(car.id, form.date)
@@ -66,9 +65,9 @@ export default function BookingModal({ car, dealerships, onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const nextErrors = {
-      ...(form.date ? {} : { date: 'Оберіть дату' }),
-      ...(form.time ? {} : { booking_datetime: 'Оберіть час' }),
-      ...(PHONE_RE.test(form.phone.trim()) ? {} : { phone: 'Введіть номер у форматі +380XXXXXXXXX' }),
+      ...(form.date ? {} : { date: t.booking.pick_date }),
+      ...(form.time ? {} : { booking_datetime: t.booking.pick_time }),
+      ...(PHONE_RE.test(form.phone.trim()) ? {} : { phone: t.booking.phone_format }),
     };
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
@@ -88,16 +87,15 @@ export default function BookingModal({ car, dealerships, onClose }) {
     } catch (err) {
       const data = err.response?.data;
       if (data && typeof data === 'object') {
-        // unique_together error comes as non_field_errors
         const nonField = data.non_field_errors;
         if (Array.isArray(nonField) && nonField.some(m => /unique|already/i.test(m))) {
-          setErrors({ _general: 'Цей час щойно забронював інший користувач. Оберіть інший слот.' });
+          setErrors({ _general: t.booking.slot_taken });
           getAvailability(car.id, form.date).then(r => setTakenTimes(r.data.taken_times || [])).catch(() => {});
         } else {
           setErrors(data);
         }
       } else {
-        setErrors({ _general: 'Помилка бронювання. Спробуйте ще раз.' });
+        setErrors({ _general: t.booking.generic_error });
       }
     } finally { setLoading(false); }
   };
@@ -118,11 +116,11 @@ export default function BookingModal({ car, dealerships, onClose }) {
           <CheckCircle2 size={56} color="#22c55e" style={{ marginBottom: 16 }} />
           <div style={{ fontWeight: 700, fontSize: 20, marginBottom: 8 }}>{t.booking.success}</div>
           <div style={{ fontSize: 14, color: 'var(--text2)', marginBottom: 24 }}>
-            {car.brand_name} {car.model_name} · {form.date} о {form.time}
+            {car.brand_name} {car.model_name} · {form.date} {t.booking.at} {form.time}
           </div>
           <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
             <button onClick={() => { onClose(); navigate('/profile'); }} style={{ ...primaryBtn, justifyContent: 'center' }}>
-              До моїх записів
+              {t.booking.go_my_bookings}
             </button>
             <button onClick={onClose} style={{ padding: '12px 20px', borderRadius: 8, background: 'var(--bg3)', border: '1px solid var(--border)', color: 'var(--text2)', fontSize: 14, fontWeight: 500, cursor: 'pointer' }}>
               {t.booking.cancel}
@@ -163,14 +161,14 @@ export default function BookingModal({ car, dealerships, onClose }) {
             <CustomSelect
               value={form.salon}
               onChange={v => setForm(p => ({ ...p, salon: v }))}
-              options={dealerships.map(d => ({ value: d.id, label: d.name }))}
+              options={dealerships.map(d => ({ value: d.id, label: localizeSalonName(d.name, lang) }))}
             />
             {fieldError('dealership')}
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <div style={fieldStyle}>
-              <label style={labelStyle}>Дата</label>
+              <label style={labelStyle}>{t.booking.date}</label>
               <DatePicker
                 value={form.date}
                 min={todayStr}
@@ -179,12 +177,12 @@ export default function BookingModal({ car, dealerships, onClose }) {
               {fieldError('date')}
             </div>
             <div style={fieldStyle}>
-              <label style={labelStyle}>Час</label>
+              <label style={labelStyle}>{t.booking.time}</label>
               <CustomSelect
                 value={form.time}
                 onChange={v => setForm(p => ({ ...p, time: v }))}
                 disabled={!form.date}
-                placeholder={form.date ? '— оберіть —' : 'Спочатку дата'}
+                placeholder={form.date ? t.select.placeholder : t.booking.date_first}
                 options={TIME_SLOTS.map(slot => ({ value: slot, label: slot, disabled: takenTimes.includes(slot) }))}
               />
               {fieldError('booking_datetime')}
@@ -192,7 +190,7 @@ export default function BookingModal({ car, dealerships, onClose }) {
           </div>
 
           <div style={fieldStyle}>
-            <label style={labelStyle}>{t.profile?.phone || 'Телефон'}</label>
+            <label style={labelStyle}>{t.profile.phone}</label>
             <input
               type="tel"
               value={form.phone}
@@ -232,9 +230,6 @@ const labelStyle = { display: 'block', fontSize: 13, color: 'var(--text2)', marg
 const inputStyle = { width: '100%', padding: '11px 14px', background: 'var(--bg3)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)', fontSize: 14, outline: 'none' };
 const primaryBtn = { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minHeight: 44, padding: '12px 24px', background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', borderRadius: 8, fontSize: 14, fontWeight: 600, border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' };
 
-const monthNames = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
-const weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'];
-
 function formatDisplayDate(value) {
   if (!value) return '';
   const [year, month, day] = value.split('-');
@@ -262,6 +257,9 @@ function getCalendarDays(year, month) {
 }
 
 function DatePicker({ value, min, onChange }) {
+  const { t } = useApp();
+  const monthNames = t.months;
+  const weekDays = t.weekDays;
   const [open, setOpen] = useState(false);
   const selectedDate = value ? new Date(`${value}T00:00:00`) : null;
   const [visibleMonth, setVisibleMonth] = useState(selectedDate || new Date());
@@ -288,7 +286,7 @@ function DatePicker({ value, min, onChange }) {
         style={{ ...inputStyle, display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', textAlign: 'left' }}
       >
         <span style={{ color: value ? 'var(--text)' : 'var(--text3)' }}>
-          {value ? formatDisplayDate(value) : 'дд.мм.рррр'}
+          {value ? formatDisplayDate(value) : t.booking.date_placeholder}
         </span>
         <Calendar size={16} color="var(--text3)" />
       </button>
@@ -308,13 +306,13 @@ function DatePicker({ value, min, onChange }) {
           zIndex: 1200,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-            <button type="button" onClick={() => shiftMonth(-1)} aria-label="Попередній місяць" style={calendarNavBtn}>
+            <button type="button" onClick={() => shiftMonth(-1)} aria-label={t.booking.prev_month} style={calendarNavBtn}>
               <ChevronLeft size={16} />
             </button>
             <div style={{ fontWeight: 700, fontSize: 13 }}>
               {monthNames[visibleMonth.getMonth()]} {visibleMonth.getFullYear()}
             </div>
-            <button type="button" onClick={() => shiftMonth(1)} aria-label="Наступний місяць" style={calendarNavBtn}>
+            <button type="button" onClick={() => shiftMonth(1)} aria-label={t.booking.next_month} style={calendarNavBtn}>
               <ChevronRight size={16} />
             </button>
           </div>

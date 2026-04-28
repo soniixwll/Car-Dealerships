@@ -65,7 +65,7 @@ export default function Footer() {
           </div>
         </div>
         <div style={{ borderTop: '1px solid var(--border)', paddingTop: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 13, color: 'var(--text3)' }}>
-          <div>© 2024 AutoHub. {t.footer.rights}</div>
+          <div>© 2026 AutoHub. {t.footer.rights}</div>
         </div>
       </div>
     </footer>

@@ -1,10 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { X, ArrowRight, Scale, Car } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { getCar } from '../services/api';
 
 export default function Compare() {
-  const { t, compareList, toggleCompare } = useApp();
+  const { t, compareList: stored, toggleCompare } = useApp();
+  const [compareList, setCompareList] = useState(stored);
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all(stored.map(c => getCar(c.id).then(r => r.data).catch(() => c)))
+      .then(fresh => { if (!cancelled) setCompareList(fresh); });
+    return () => { cancelled = true; };
+  }, [stored]);
 
   const fields = [
     ['price', t.compare.price, c => `$${Math.round(parseFloat(c.price_uah) / 41).toLocaleString()}`],
@@ -43,7 +52,6 @@ export default function Compare() {
       </div>
 
       <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, overflow: 'hidden' }}>
-        {/* Car headers */}
         <div style={{ display: 'grid', gridTemplateColumns: `200px repeat(${compareList.length}, 1fr)`, borderBottom: '1px solid var(--border)' }}>
           <div style={{ padding: 20, background: 'var(--bg3)' }} />
           {compareList.map(car => {
@@ -54,7 +62,7 @@ export default function Compare() {
                   <X size={14} />
                 </button>
                 <div style={{ height: 120, borderRadius: 10, overflow: 'hidden', background: 'var(--bg3)', marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {img ? <img src={`http://127.0.0.1:8000${img.image}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Car size={36} color="var(--text3)" />}
+                  {img ? <img src={img.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Car size={36} color="var(--text3)" />}
                 </div>
                 <div style={{ fontWeight: 650, fontSize: 15, marginBottom: 2 }}>{car.brand_name} {car.model_name}</div>
                 <div style={{ fontSize: 18, fontWeight: 650, color: 'var(--blue)', marginBottom: 8 }}>${Math.round(parseFloat(car.price_uah) / 41).toLocaleString()}</div>
@@ -66,7 +74,6 @@ export default function Compare() {
           })}
         </div>
 
-        {/* Rows */}
         {fields.map(([key, label, getValue]) => {
           const values = compareList.map(c => getValue(c));
           const allSame = values.every(v => v === values[0]);

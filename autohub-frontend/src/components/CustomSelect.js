@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
+import { useApp } from '../context/AppContext';
 
 export default function CustomSelect({ value, onChange, options, placeholder, disabled, style, pill }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const { t } = useApp();
 
   const selected = options.find(o => String(o.value) === String(value));
 
@@ -44,7 +46,7 @@ export default function CustomSelect({ value, onChange, options, placeholder, di
         }}
       >
         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          {selected ? selected.label : (placeholder || '— оберіть —')}
+          {selected ? selected.label : (placeholder || t.select.placeholder)}
         </span>
         <ChevronDown
           size={14}
@@ -95,7 +97,7 @@ export default function CustomSelect({ value, onChange, options, placeholder, di
                   onMouseEnter={e => { if (!isDisabled && !isSelected) e.currentTarget.style.background = 'var(--bg3)'; }}
                   onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = 'transparent'; }}
                 >
-                  <span>{opt.label}{isDisabled ? ' — зайнято' : ''}</span>
+                  <span>{opt.label}{isDisabled ? t.select.taken : ''}</span>
                   {isSelected && <Check size={14} />}
                 </button>
               );

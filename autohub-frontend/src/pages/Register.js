@@ -13,7 +13,7 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (form.password !== form.password2) { setError('Паролі не співпадають'); return; }
+    if (form.password !== form.password2) { setError(t.auth.passwords_mismatch); return; }
     setLoading(true); setError('');
     try {
       await registerApi({ email: form.email, username: form.username, password: form.password, password2: form.password2, phone: form.phone });
@@ -22,7 +22,7 @@ export default function Register() {
       navigate('/');
     } catch (err) {
       const d = err.response?.data;
-      setError(d ? Object.values(d).flat().join(' ') : 'Помилка реєстрації');
+      setError(d ? Object.values(d).flat().join(' ') : t.auth.register_error);
     } finally { setLoading(false); }
   };
 
@@ -33,7 +33,7 @@ export default function Register() {
       login({ email: r.data.email, username: r.data.username, role: r.data.role }, r.data.access);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Не вдалось увійти через Google');
+      setError(err.response?.data?.detail || t.auth.google_failed);
     }
   };
 
@@ -66,7 +66,7 @@ export default function Register() {
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <GoogleLogin
             onSuccess={handleGoogleSuccess}
-            onError={() => setError('Не вдалось увійти через Google')}
+            onError={() => setError(t.auth.google_failed)}
             theme="filled_blue"
             shape="pill"
             text="signup_with"

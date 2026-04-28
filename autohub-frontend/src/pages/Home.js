@@ -5,17 +5,19 @@ import CustomSelect from '../components/CustomSelect';
 import { useApp } from '../context/AppContext';
 import { getCars, getDealerships, getBrands } from '../services/api';
 import CarCard from '../components/CarCard';
+import { localizeSalonName, localizeDistrict, localizeAddress, localizeHours } from '../i18n';
 
 export default function Home() {
-  const { t } = useApp();
+  const { t, lang } = useApp();
   const navigate = useNavigate();
   const [cars, setCars] = useState([]);
   const [salons, setSalons] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [totalCars, setTotalCars] = useState(0);
   const [search, setSearch] = useState({ brand: '', price_max: '' });
 
   useEffect(() => {
-    getCars({ ordering: '-created_at', page_size: 6 }).then(r => setCars(r.data.results || [])).catch(() => {});
+    getCars({ ordering: '-created_at', page_size: 6 }).then(r => { setCars(r.data.results || []); setTotalCars(r.data.count || 0); }).catch(() => {});
     getDealerships().then(r => setSalons(r.data.results || r.data || [])).catch(() => {});
     getBrands().then(r => setBrands(r.data.results || r.data || [])).catch(() => {});
   }, []);
@@ -30,7 +32,6 @@ export default function Home() {
 
   return (
     <div>
-      {/* HERO */}
       <section style={{ position: 'relative', minHeight: '85vh', display: 'flex', alignItems: 'center', overflow: 'hidden', background: 'linear-gradient(135deg, #f8fbff 0%, #eef6ff 52%, #dcecff 100%)' }}>
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(79,134,217,0.12) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(119,168,232,0.1) 0%, transparent 50%)' }} />
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(79,134,217,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(79,134,217,0.035) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
@@ -39,7 +40,7 @@ export default function Home() {
           <div style={{ maxWidth: 700 }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(79,134,217,0.1)', border: '1px solid rgba(79,134,217,0.2)', borderRadius: 100, padding: '6px 16px', fontSize: 13, fontWeight: 500, color: 'var(--blue)', marginBottom: 24 }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--blue)', display: 'inline-block', animation: 'pulse 2s infinite' }} />
-              Мережа автосалонів AutoHub
+              {t.home.hero_badge}
             </div>
             <h1 style={{ fontSize: 'clamp(36px, 5.5vw, 64px)', fontWeight: 700, lineHeight: 1.08, marginBottom: 20 }}>
               {t.home.hero_title}<br />
@@ -49,7 +50,6 @@ export default function Home() {
               {t.home.hero_sub}
             </p>
 
-            {/* Search bar */}
             <form onSubmit={handleSearch} style={{ background: 'rgba(248,251,255,0.82)', border: '1px solid var(--border)', borderRadius: 16, padding: 20, backdropFilter: 'blur(12px)', marginBottom: 40 }}>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))', gap: 12, alignItems: 'end' }}>
                 <div>
@@ -57,8 +57,8 @@ export default function Home() {
                   <CustomSelect
                     value={search.brand}
                     onChange={v => setSearch(p => ({ ...p, brand: v }))}
-                    placeholder="Будь-яка"
-                    options={[{ value: '', label: 'Будь-яка' }, ...brands.map(b => ({ value: b.name, label: b.name }))]}
+                    placeholder={t.home.any}
+                    options={[{ value: '', label: t.home.any }, ...brands.map(b => ({ value: b.name, label: b.name }))]}
                   />
                 </div>
                 <div>
@@ -66,26 +66,26 @@ export default function Home() {
                   <CustomSelect
                     value={search.price_max}
                     onChange={v => setSearch(p => ({ ...p, price_max: v }))}
-                    placeholder="Будь-яка"
+                    placeholder={t.home.any}
                     options={[
-                      { value: '', label: 'Будь-яка' },
-                      { value: '615000', label: 'До $15,000' },
-                      { value: '1230000', label: 'До $30,000' },
-                      { value: '2050000', label: 'До $50,000' },
-                      { value: '4100000', label: 'До $100,000' },
+                      { value: '', label: t.home.any },
+                      { value: '615000', label: `${t.home.up_to} $15,000` },
+                      { value: '1230000', label: `${t.home.up_to} $30,000` },
+                      { value: '2050000', label: `${t.home.up_to} $50,000` },
+                      { value: '4100000', label: `${t.home.up_to} $100,000` },
                     ]}
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, color: 'var(--text3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.5px', fontWeight: 600 }}>Стан</label>
+                  <label style={{ display: 'block', fontSize: 12, color: 'var(--text3)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.5px', fontWeight: 600 }}>{t.home.condition}</label>
                   <CustomSelect
                     value=""
                     onChange={() => {}}
-                    placeholder="Будь-який"
+                    placeholder={t.home.any_m}
                     options={[
-                      { value: '', label: 'Будь-який' },
-                      { value: 'new', label: 'Новий' },
-                      { value: 'used', label: 'Вживаний' },
+                      { value: '', label: t.home.any_m },
+                      { value: 'new', label: t.catalog.new },
+                      { value: 'used', label: t.catalog.used },
                     ]}
                   />
                 </div>
@@ -95,9 +95,8 @@ export default function Home() {
               </div>
             </form>
 
-            {/* Stats */}
             <div style={{ display: 'flex', gap: 40 }}>
-              {[['17+', 'Автомобілів'], ['3', 'Салони'], ['10+', 'Брендів']].map(([num, label]) => (
+              {[[`${totalCars}+`, t.home.stats_cars], [`${salons.length}`, t.home.stats_salons], [`${brands.length}+`, t.home.stats_brands]].map(([num, label]) => (
                 <div key={label}>
                   <div style={{ fontSize: 26, fontWeight: 650, color: 'var(--text)' }}>{num}</div>
                   <div style={{ fontSize: 13, color: 'var(--text3)' }}>{label}</div>
@@ -108,11 +107,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURED CARS */}
       <section style={{ padding: '80px 24px', maxWidth: 1280, margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 40 }}>
           <div>
-            <div style={{ fontSize: 13, color: 'var(--blue)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>Каталог</div>
+            <div style={{ fontSize: 13, color: 'var(--blue)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 8 }}>{t.home.catalog_eyebrow}</div>
             <h2 style={{ fontSize: 32, fontWeight: 650 }}>{t.home.featured}</h2>
             <p style={{ color: 'var(--text2)', marginTop: 8 }}>{t.home.featured_sub}</p>
           </div>
@@ -127,7 +125,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SALONS */}
       <section style={{ padding: '80px 24px', background: 'var(--bg2)' }}>
         <div style={{ maxWidth: 1280, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
@@ -143,12 +140,12 @@ export default function Home() {
                   <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(79,134,217,0.15)', border: '1px solid rgba(79,134,217,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <MapPin size={24} color="var(--blue)" />
                   </div>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--blue)' }}>{salon.district}</div>
+                  <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--blue)' }}>{localizeDistrict(salon.district, lang)}</div>
                 </div>
                 <div style={{ padding: 20 }}>
-                  <h3 style={{ fontWeight: 700, fontSize: 18, marginBottom: 12 }}>{salon.name}</h3>
+                  <h3 style={{ fontWeight: 700, fontSize: 18, marginBottom: 12 }}>{localizeSalonName(salon.name, lang)}</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
-                    {[{ Icon: MapPin, text: salon.address }, { Icon: Phone, text: salon.phone }, { Icon: Mail, text: salon.email }, { Icon: Clock, text: salon.working_hours }].map(({ Icon, text }) => (
+                    {[{ Icon: MapPin, text: localizeAddress(salon.address, lang) }, { Icon: Phone, text: salon.phone }, { Icon: Mail, text: salon.email }, { Icon: Clock, text: localizeHours(salon.working_hours, lang) }].map(({ Icon, text }) => (
                       <div key={text} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: 'var(--text2)' }}>
                         <Icon size={14} color="var(--text3)" style={{ flexShrink: 0, marginTop: 2 }} />
                         <span>{text}</span>

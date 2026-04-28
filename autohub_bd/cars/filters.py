@@ -2,8 +2,12 @@ import django_filters
 from .models import Car
 
 
+class CharInFilter(django_filters.BaseInFilter, django_filters.CharFilter):
+    pass
+
+
 class CarFilter(django_filters.FilterSet):
-    brand = django_filters.CharFilter(field_name='generation__car_model__brand__name', lookup_expr='iexact')
+    brand = CharInFilter(field_name='generation__car_model__brand__name', lookup_expr='in')
     car_model = django_filters.CharFilter(field_name='generation__car_model__name', lookup_expr='iexact')
     year_min = django_filters.NumberFilter(field_name='year', lookup_expr='gte')
     year_max = django_filters.NumberFilter(field_name='year', lookup_expr='lte')

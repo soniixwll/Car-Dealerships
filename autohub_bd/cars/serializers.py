@@ -3,9 +3,20 @@ from .models import Brand, CarModel, Generation, Car, CarImage, Favorite
 
 
 class CarImageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = CarImage
         fields = ('id', 'image', 'is_main', 'order')
+
+    def get_image(self, obj):
+        if obj.external_url:
+            return obj.external_url
+        if obj.image:
+            request = self.context.get('request')
+            url = obj.image.url
+            return request.build_absolute_uri(url) if request else url
+        return None
 
 
 class BrandSerializer(serializers.ModelSerializer):
@@ -21,7 +32,10 @@ class CarListSerializer(serializers.ModelSerializer):
     dealership_name = serializers.CharField(source='dealership.name', read_only=True)
     fuel_type_display = serializers.CharField(source='get_fuel_type_display', read_only=True)
     body_type_display = serializers.CharField(source='get_body_type_display', read_only=True)
+    transmission_display = serializers.CharField(source='get_transmission_display', read_only=True)
+    drive_type_display = serializers.CharField(source='get_drive_type_display', read_only=True)
     status_display = serializers.CharField(source='get_status_display', read_only=True)
+    images = CarImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Car
@@ -29,8 +43,10 @@ class CarListSerializer(serializers.ModelSerializer):
             'id', 'brand_name', 'model_name', 'generation_name',
             'year', 'body_type', 'body_type_display',
             'fuel_type', 'fuel_type_display',
+            'transmission', 'transmission_display',
+            'drive_type', 'drive_type_display',
             'mileage_km', 'condition', 'price_uah',
-            'status', 'status_display', 'dealership_name',
+            'status', 'status_display', 'dealership_name', 'images',
         )
 
 

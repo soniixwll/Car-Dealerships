@@ -58,11 +58,11 @@ export default function Compare() {
             const img = car.images?.[0];
             return (
               <div key={car.id} style={{ padding: 20, position: 'relative', borderLeft: '1px solid var(--border)' }}>
-                <button onClick={() => toggleCompare(car)} style={{ position: 'absolute', top: 12, right: 12, width: 28, height: 28, borderRadius: 8, background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}>
+                <button onClick={() => toggleCompare(car)} aria-label={`Remove ${car.brand_name} ${car.model_name} from compare`} style={{ position: 'absolute', top: 12, right: 12, width: 28, height: 28, borderRadius: 8, background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#ef4444' }}>
                   <X size={14} />
                 </button>
                 <div style={{ height: 120, borderRadius: 10, overflow: 'hidden', background: 'var(--bg3)', marginBottom: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  {img ? <img src={img.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Car size={36} color="var(--text3)" />}
+                  {img ? <img src={img.image} alt="" loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <Car size={36} color="var(--text3)" />}
                 </div>
                 <div style={{ fontWeight: 650, fontSize: 15, marginBottom: 2 }}>{car.brand_name} {car.model_name}</div>
                 <div style={{ fontSize: 18, fontWeight: 650, color: 'var(--blue)', marginBottom: 8 }}>${Math.round(parseFloat(car.price_uah) / 41).toLocaleString()}</div>
@@ -81,10 +81,10 @@ export default function Compare() {
             <div key={key} style={{ display: 'grid', gridTemplateColumns: `200px repeat(${compareList.length}, 1fr)`, borderBottom: '1px solid var(--border)' }}>
               <div style={{ padding: '14px 20px', background: 'var(--bg3)', fontSize: 13, fontWeight: 600, color: 'var(--text2)', display: 'flex', alignItems: 'center' }}>
                 {label}
-                {!allSame && <span style={{ marginLeft: 8, fontSize: 11, color: 'var(--blue)', background: 'rgba(79,134,217,0.1)', padding: '2px 6px', borderRadius: 4 }}>{t.compare.different}</span>}
+                {!allSame && <span style={{ marginLeft: 8, fontSize: 11, color: 'var(--blue)', background: 'rgba(53,104,179,0.1)', padding: '2px 6px', borderRadius: 4 }}>{t.compare.different}</span>}
               </div>
               {compareList.map((car, i) => (
-                <div key={car.id} style={{ padding: '14px 20px', borderLeft: '1px solid var(--border)', fontSize: 14, fontWeight: 500, background: !allSame ? 'rgba(79,134,217,0.04)' : 'transparent', display: 'flex', alignItems: 'center' }}>
+                <div key={car.id} style={{ padding: '14px 20px', borderLeft: '1px solid var(--border)', fontSize: 14, fontWeight: 500, background: !allSame ? 'rgba(53,104,179,0.04)' : 'transparent', display: 'flex', alignItems: 'center' }}>
                   {values[i]}
                 </div>
               ))}

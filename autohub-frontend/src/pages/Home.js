@@ -1,26 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { ArrowRight, MapPin, Phone, Mail, Clock } from 'lucide-react';
 import CustomSelect from '../components/CustomSelect';
 import { useApp } from '../context/AppContext';
 import { getCars, getDealerships, getBrands } from '../services/api';
 import CarCard from '../components/CarCard';
+import { CarCardSkeleton } from '../components/Skeleton';
+import Seo from '../components/Seo';
 import { localizeSalonName, localizeDistrict, localizeAddress, localizeHours } from '../i18n';
 
 export default function Home() {
   const { t, lang } = useApp();
   const navigate = useNavigate();
-  const [cars, setCars] = useState([]);
-  const [salons, setSalons] = useState([]);
-  const [brands, setBrands] = useState([]);
-  const [totalCars, setTotalCars] = useState(0);
   const [search, setSearch] = useState({ brand: '', price_max: '' });
 
-  useEffect(() => {
-    getCars({ ordering: '-created_at', page_size: 6 }).then(r => { setCars(r.data.results || []); setTotalCars(r.data.count || 0); }).catch(() => {});
-    getDealerships().then(r => setSalons(r.data.results || r.data || [])).catch(() => {});
-    getBrands().then(r => setBrands(r.data.results || r.data || [])).catch(() => {});
-  }, []);
+  const { data: carsData, isLoading: carsLoading } = useQuery({
+    queryKey: ['cars', { ordering: '-created_at', page_size: 6 }],
+    queryFn: () => getCars({ ordering: '-created_at', page_size: 6 }).then(r => r.data),
+  });
+  const cars = carsData?.results || [];
+  const totalCars = carsData?.count || 0;
+
+  const { data: salons = [] } = useQuery({
+    queryKey: ['dealerships'],
+    queryFn: () => getDealerships().then(r => r.data.results || r.data || []),
+    staleTime: 5 * 60_000,
+  });
+
+  const { data: brands = [] } = useQuery({
+    queryKey: ['brands'],
+    queryFn: () => getBrands().then(r => r.data.results || r.data || []),
+    staleTime: 5 * 60_000,
+  });
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -32,13 +44,17 @@ export default function Home() {
 
   return (
     <div>
+      <Seo
+        title={t.home.seo_title || 'Каталог авто та автосалонів'}
+        description={t.home.seo_description || 'Купуйте нові та вживані автомобілі від перевірених салонів. Тест-драйв, порівняння і калькулятор вартості володіння.'}
+      />
       <section style={{ position: 'relative', minHeight: '85vh', display: 'flex', alignItems: 'center', overflow: 'hidden', background: 'linear-gradient(135deg, #f8fbff 0%, #eef6ff 52%, #dcecff 100%)' }}>
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(79,134,217,0.12) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(119,168,232,0.1) 0%, transparent 50%)' }} />
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(79,134,217,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(79,134,217,0.035) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(53,104,179,0.12) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(119,168,232,0.1) 0%, transparent 50%)' }} />
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(53,104,179,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(53,104,179,0.035) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
 
         <div style={{ maxWidth: 1280, margin: '0 auto', padding: '80px 24px', position: 'relative', zIndex: 2, width: '100%' }}>
           <div style={{ maxWidth: 700 }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(79,134,217,0.1)', border: '1px solid rgba(79,134,217,0.2)', borderRadius: 100, padding: '6px 16px', fontSize: 13, fontWeight: 500, color: 'var(--blue)', marginBottom: 24 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(53,104,179,0.1)', border: '1px solid rgba(53,104,179,0.2)', borderRadius: 100, padding: '6px 16px', fontSize: 13, fontWeight: 500, color: 'var(--blue)', marginBottom: 24 }}>
               <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--blue)', display: 'inline-block', animation: 'pulse 2s infinite' }} />
               {t.home.hero_badge}
             </div>
@@ -119,9 +135,9 @@ export default function Home() {
           </Link>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 20 }}>
-          {cars.length > 0 ? cars.slice(0, 6).map(car => <CarCard key={car.id} car={car} />) : (
-            Array(6).fill(0).map((_, i) => <div key={i} style={{ height: 360, background: 'var(--card)', borderRadius: 16, animation: 'pulse 1.5s infinite' }} />)
-          )}
+          {carsLoading
+            ? Array(6).fill(0).map((_, i) => <CarCardSkeleton key={i} />)
+            : cars.slice(0, 6).map(car => <CarCard key={car.id} car={car} />)}
         </div>
       </section>
 
@@ -137,7 +153,7 @@ export default function Home() {
                 onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-4px)'}
                 onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
                 <div style={{ height: 140, background: 'linear-gradient(135deg, #e5f0fb, #cfe2f7)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                  <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(79,134,217,0.15)', border: '1px solid rgba(79,134,217,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(53,104,179,0.15)', border: '1px solid rgba(53,104,179,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <MapPin size={24} color="var(--blue)" />
                   </div>
                   <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--blue)' }}>{localizeDistrict(salon.district, lang)}</div>

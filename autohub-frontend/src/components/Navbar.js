@@ -52,7 +52,7 @@ export default function Navbar() {
         {!isCompact && (
           <div style={{ display: 'flex', gap: 4, flex: 1 }}>
             {navLinks.map(l => (
-              <Link key={l.path} to={l.path} style={{ padding: '8px 16px', borderRadius: 8, fontSize: 15, fontWeight: 500, color: isActive(l.path) ? 'var(--blue)' : 'var(--text2)', transition: '.15s', background: isActive(l.path) ? 'rgba(79,134,217,0.12)' : 'transparent' }}>
+              <Link key={l.path} to={l.path} style={{ padding: '8px 16px', borderRadius: 8, fontSize: 15, fontWeight: 500, color: isActive(l.path) ? 'var(--blue)' : 'var(--text2)', transition: '.15s', background: isActive(l.path) ? 'rgba(53,104,179,0.12)' : 'transparent' }}>
                 {l.label}
               </Link>
             ))}
@@ -94,7 +94,7 @@ export default function Navbar() {
               <Link to="/profile" style={{ width: 38, height: 38, borderRadius: 10, background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 650, fontSize: 15, color: '#fff' }}>
                 {(user.username || user.email || 'U')[0].toUpperCase()}
               </Link>
-              <button onClick={() => { logout(); navigate('/'); }} style={{ width: 38, height: 38, borderRadius: 10, background: 'var(--bg3)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <button aria-label={t.nav.logout} onClick={() => { logout(); navigate('/'); }} style={{ width: 38, height: 38, borderRadius: 10, background: 'var(--bg3)', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <LogOut size={16} color="var(--text2)" />
               </button>
             </div>
@@ -119,7 +119,7 @@ export default function Navbar() {
           {isMobile && <div style={{ marginBottom: 12 }}>{searchInput}</div>}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 12 }}>
             {navLinks.map(l => (
-              <Link key={l.path} to={l.path} onClick={() => setMenuOpen(false)} style={{ padding: '12px 14px', borderRadius: 8, fontSize: 16, fontWeight: 500, color: isActive(l.path) ? 'var(--blue)' : 'var(--text)', background: isActive(l.path) ? 'rgba(79,134,217,0.12)' : 'transparent' }}>
+              <Link key={l.path} to={l.path} onClick={() => setMenuOpen(false)} style={{ padding: '12px 14px', borderRadius: 8, fontSize: 16, fontWeight: 500, color: isActive(l.path) ? 'var(--blue)' : 'var(--text)', background: isActive(l.path) ? 'rgba(53,104,179,0.12)' : 'transparent' }}>
                 {l.label}
               </Link>
             ))}
@@ -142,7 +142,7 @@ export default function Navbar() {
               <Link to="/profile" onClick={() => setMenuOpen(false)} style={{ flex: 1, padding: '12px', textAlign: 'center', borderRadius: 8, background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', fontSize: 14, fontWeight: 600 }}>
                 <User size={14} style={{ verticalAlign: 'middle', marginRight: 6 }} />{user.username || user.email}
               </Link>
-              <button onClick={() => { logout(); setMenuOpen(false); navigate('/'); }} style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', fontSize: 14, fontWeight: 500 }}>
+              <button aria-label={t.nav.logout} onClick={() => { logout(); setMenuOpen(false); navigate('/'); }} style={{ padding: '12px 16px', borderRadius: 8, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', color: '#ef4444', fontSize: 14, fontWeight: 500 }}>
                 <LogOut size={14} />
               </button>
             </div>

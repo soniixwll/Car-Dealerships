@@ -1,9 +1,11 @@
 from django.conf import settings
 from rest_framework import generics, permissions, status
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
+from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from google.oauth2 import id_token as google_id_token
 from google.auth.transport import requests as google_requests
 from .models import CustomUser
@@ -14,10 +16,14 @@ class RegisterView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = (permissions.AllowAny,)
+    throttle_classes = (ScopedRateThrottle,)
+    throttle_scope = 'register'
 
 
 class LoginView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+    throttle_classes = (ScopedRateThrottle,)
+    throttle_scope = 'auth'
 
 
 class ProfileView(generics.RetrieveUpdateAPIView):
@@ -26,6 +32,20 @@ class ProfileView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class LogoutView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        refresh = request.data.get('refresh')
+        if not refresh:
+            return Response({'detail': 'refresh is required'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            RefreshToken(refresh).blacklist()
+        except TokenError:
+            return Response({'detail': 'Invalid or expired token'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_205_RESET_CONTENT)
 
 
 def _unique_username(base):
@@ -40,6 +60,7 @@ def _unique_username(base):
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
+@throttle_classes([ScopedRateThrottle])
 def google_login(request):
     token = request.data.get('id_token') or request.data.get('credential')
     if not token:
@@ -76,3 +97,6 @@ def google_login(request):
         'username': user.username,
         'role': user.role,
     })
+
+
+google_login.throttle_scope = 'auth'

@@ -129,7 +129,7 @@ dealerships_data = [
 
 dealerships = []
 for d in dealerships_data:
-    obj, _ = Dealership.objects.get_or_create(name=d['name'], defaults=d)
+    obj, _ = Dealership.objects.update_or_create(name=d['name'], defaults=d)
     dealerships.append(obj)
 
 catalog = {
@@ -202,7 +202,7 @@ for brand_name, models in catalog.items():
     for model_name, gens in models.items():
         car_model, _ = CarModel.objects.get_or_create(brand=brand, name=model_name)
         for gen_name, y_start, y_end in gens:
-            gen, _ = Generation.objects.get_or_create(
+            gen, _ = Generation.objects.update_or_create(
                 car_model=car_model,
                 name=gen_name,
                 defaults={'year_start': y_start, 'year_end': y_end},
@@ -262,7 +262,7 @@ cars_data = [
 for c in cars_data:
     gen = generations[c['gen']]
     dealer = dealerships[c['dealer_idx']]
-    Car.objects.get_or_create(
+    Car.objects.update_or_create(
         generation=gen,
         dealership=dealer,
         year=c['year'],
@@ -280,6 +280,19 @@ for c in cars_data:
             'price_uah': Decimal(c['price_uah']),
         },
     )
+
+# Safety check: warn if duplicate cars exist with the same key.
+from django.db.models import Count as _Count
+_dups = Car.objects.values('generation_id', 'dealership_id', 'year', 'color').annotate(n=_Count('id')).filter(n__gt=1)
+if _dups:
+    print('WARNING: duplicate cars detected (same generation+dealership+year+color):')
+    for d in _dups:
+        ids = list(Car.objects.filter(
+            generation_id=d['generation_id'], dealership_id=d['dealership_id'],
+            year=d['year'], color=d['color'],
+        ).values_list('id', flat=True))
+        print(f'  ids={ids} {d}')
+    print('Resolve manually before re-seeding.')
 
 print(f'Users: {User.objects.count()}')
 print(f'Dealerships: {Dealership.objects.count()}')

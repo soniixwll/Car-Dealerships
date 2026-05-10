@@ -84,7 +84,7 @@ export default function CustomSelect({ value, onChange, options, placeholder, di
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '10px 14px',
-                    background: isSelected ? 'rgba(79,134,217,0.12)' : 'transparent',
+                    background: isSelected ? 'rgba(53,104,179,0.12)' : 'transparent',
                     border: 'none',
                     color: isDisabled ? 'var(--text3)' : isSelected ? 'var(--blue)' : 'var(--text)',
                     fontSize: 14,

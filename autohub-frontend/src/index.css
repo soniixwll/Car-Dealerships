@@ -7,12 +7,12 @@
   --card: #f8fbff;
   --card2: #edf6ff;
   --border: rgba(75,110,150,0.18);
-  --blue: #4f86d9;
-  --blue-hover: #3f72c2;
+  --blue: #3568b3;
+  --blue-hover: #2e5fa8;
   --blue-light: #77a8e8;
   --text: #17263a;
   --text2: #4f637a;
-  --text3: #7b8da2;
+  --text3: #566678;
   --green: #22c55e;
   --yellow: #eab308;
   --red: #ef4444;
@@ -47,3 +47,45 @@ button[style*="linear-gradient(135deg,var(--blue-hover),var(--blue))"]:disabled:
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 input[type=number] { -moz-appearance: textfield; }
+
+@keyframes skeleton-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+button:focus-visible, a:focus-visible, [role="button"]:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(79,134,217,0.18);
+}
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 0;
+  border-color: var(--blue);
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 8px;
+  z-index: 10000;
+  padding: 10px 16px;
+  background: var(--blue);
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.skip-link:focus, .skip-link:focus-visible { left: 8px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

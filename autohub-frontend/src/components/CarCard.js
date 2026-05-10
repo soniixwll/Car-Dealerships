@@ -36,7 +36,7 @@ export default function CarCard({ car }) {
 
       <div style={{ position: 'relative', height: 200, overflow: 'hidden', background: 'var(--bg3)' }}>
         {mainImage ? (
-          <img src={mainImage} alt={`${car.brand_name} ${car.model_name}`} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .3s' }} />
+          <img src={mainImage} alt={`${car.brand_name} ${car.model_name}`} loading="lazy" decoding="async" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform .3s' }} />
         ) : (
           <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text3)' }}>
             <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
@@ -46,6 +46,8 @@ export default function CarCard({ car }) {
           {car.condition === 'new' ? t.catalog.new : t.catalog.used}
         </div>
         <button onClick={handleFavoriteClick}
+          aria-label={fav ? t.car.remove_favorites : t.car.add_favorites}
+          aria-pressed={fav}
           style={{ position: 'absolute', top: 10, right: 10, width: 34, height: 34, borderRadius: 8, background: 'rgba(0,0,0,0.5)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)', cursor: 'pointer' }}>
           <Heart size={16} color={fav ? '#ef4444' : '#fff'} fill={fav ? '#ef4444' : 'none'} />
         </button>
@@ -67,7 +69,7 @@ export default function CarCard({ car }) {
           <Link to={`/cars/${car.id}`} style={{ flex: 1, minHeight: 40, padding: '10px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', borderRadius: 8, fontSize: 14, fontWeight: 600, border: 'none', whiteSpace: 'nowrap' }}>
             {t.catalog.view}
           </Link>
-          <button onClick={() => toggleCompare(car)} style={{ width: 40, height: 40, borderRadius: 8, background: inComp ? 'rgba(79,134,217,0.15)' : 'var(--bg3)', border: `1px solid ${inComp ? 'var(--blue)' : 'var(--border)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button onClick={() => toggleCompare(car)} aria-label={t.car.add_compare} aria-pressed={inComp} style={{ width: 40, height: 40, borderRadius: 8, background: inComp ? 'rgba(53,104,179,0.15)' : 'var(--bg3)', border: `1px solid ${inComp ? 'var(--blue)' : 'var(--border)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <GitCompare size={16} color={inComp ? 'var(--blue)' : 'var(--text2)'} />
           </button>
         </div>

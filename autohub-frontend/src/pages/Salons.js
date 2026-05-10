@@ -1,23 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { MapPin, Phone, Mail, Clock, Car } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { getDealerships } from '../services/api';
+import { SalonCardSkeleton } from '../components/Skeleton';
+import Seo from '../components/Seo';
 import { localizeSalonName, localizeDistrict, localizeAddress, localizeHours, localizeCity } from '../i18n';
 
 export default function Salons() {
   const { t, lang } = useApp();
-  const [salons, setSalons] = useState([]);
-
-  useEffect(() => { getDealerships().then(r => setSalons(r.data.results || r.data || [])).catch(() => {}); }, []);
+  const { data: salons = [], isLoading } = useQuery({
+    queryKey: ['dealerships'],
+    queryFn: () => getDealerships().then(r => r.data.results || r.data || []),
+    staleTime: 5 * 60_000,
+  });
 
   return (
     <div style={{ maxWidth: 1280, margin: '0 auto', padding: '60px 24px' }}>
+      <Seo title={t.salons.title} description={t.salons.sub} />
       <div style={{ textAlign: 'center', marginBottom: 56 }}>
         <h1 style={{ fontSize: 30, fontWeight: 600, marginBottom: 12 }}>{t.salons.title}</h1>
         <p style={{ color: 'var(--text2)', fontSize: 16 }}>{t.salons.sub}</p>
       </div>
 
-      {(() => {
+      {isLoading && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 320px), 1fr))', gap: 24 }}>
+          {Array(6).fill(0).map((_, i) => <SalonCardSkeleton key={i} />)}
+        </div>
+      )}
+
+      {!isLoading && (() => {
         const cityOrder = ['Київ', 'Львів', 'Одеса', 'Харків'];
         const groups = salons.reduce((acc, s) => {
           const city = (s.name.split(' ')[1]) || 'Інше';
@@ -35,8 +47,8 @@ export default function Salons() {
             onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}>
 
             <div style={{ height: 160, background: 'linear-gradient(135deg, #e5f0fb, #cfe2f7)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, position: 'relative' }}>
-              <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'rgba(79,134,217,0.18)', border: '2px solid rgba(79,134,217,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <MapPin size={28} color="var(--blue)" fill="rgba(79,134,217,0.18)" />
+              <div style={{ width: 60, height: 60, borderRadius: '50%', background: 'rgba(53,104,179,0.18)', border: '2px solid rgba(53,104,179,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <MapPin size={28} color="var(--blue)" fill="rgba(53,104,179,0.18)" />
               </div>
               <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--blue)' }}>{localizeDistrict(salon.district, lang)}</div>
             </div>

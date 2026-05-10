@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { X, Calendar, CheckCircle2, LockKeyhole, Car, ChevronLeft, ChevronRight } from 'lucide-react';
 import CustomSelect from './CustomSelect';
 import { useApp } from '../context/AppContext';
+import toast from 'react-hot-toast';
 import { createBooking, getProfile, getAvailability } from '../services/api';
+import useFocusTrap from '../hooks/useFocusTrap';
 import { localizeSalonName } from '../i18n';
 
 const TIME_SLOTS = (() => {
@@ -30,6 +32,7 @@ export default function BookingModal({ car, dealerships, onClose }) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState({});
+  const trapRef = useFocusTrap(true, onClose);
 
   useEffect(() => {
     if (user && !form.phone) {
@@ -49,10 +52,10 @@ export default function BookingModal({ car, dealerships, onClose }) {
 
   if (!user) return (
     <div style={overlayStyle} onClick={onClose}>
-      <div style={modalStyle} onClick={e => e.stopPropagation()}>
-        <button onClick={onClose} style={closeBtn}><X size={18} /></button>
+      <div ref={trapRef} role="dialog" aria-modal="true" style={modalStyle} onClick={e => e.stopPropagation()}>
+        <button onClick={onClose} aria-label="Close" style={closeBtn}><X size={18} /></button>
         <div style={{ textAlign: 'center', padding: '40px 0' }}>
-          <div style={{ width: 80, height: 80, borderRadius: 20, background: 'rgba(79,134,217,0.1)', border: '1px solid rgba(79,134,217,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div style={{ width: 80, height: 80, borderRadius: 20, background: 'rgba(53,104,179,0.1)', border: '1px solid rgba(53,104,179,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <LockKeyhole size={36} color="var(--blue)" />
           </div>
           <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>{t.booking.login_required}</div>
@@ -84,6 +87,7 @@ export default function BookingModal({ car, dealerships, onClose }) {
         comment: form.comment,
       });
       setSuccess(true);
+      toast.success(t.booking.success || 'Запис створено');
     } catch (err) {
       const data = err.response?.data;
       if (data && typeof data === 'object') {
@@ -110,8 +114,8 @@ export default function BookingModal({ car, dealerships, onClose }) {
 
   if (success) return (
     <div style={overlayStyle} onClick={onClose}>
-      <div style={modalStyle} onClick={e => e.stopPropagation()}>
-        <button onClick={onClose} style={closeBtn}><X size={18} /></button>
+      <div ref={trapRef} role="dialog" aria-modal="true" style={modalStyle} onClick={e => e.stopPropagation()}>
+        <button onClick={onClose} aria-label="Close" style={closeBtn}><X size={18} /></button>
         <div style={{ textAlign: 'center', padding: '32px 8px' }}>
           <CheckCircle2 size={56} color="#22c55e" style={{ marginBottom: 16 }} />
           <div style={{ fontWeight: 700, fontSize: 20, marginBottom: 8 }}>{t.booking.success}</div>
@@ -133,15 +137,15 @@ export default function BookingModal({ car, dealerships, onClose }) {
 
   return (
     <div style={overlayStyle} onClick={onClose}>
-      <div style={modalStyle} onClick={e => e.stopPropagation()}>
+      <div ref={trapRef} role="dialog" aria-modal="true" style={modalStyle} onClick={e => e.stopPropagation()}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(79,134,217,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 40, height: 40, borderRadius: 10, background: 'rgba(53,104,179,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Calendar size={20} color="var(--blue)" />
             </div>
             <h2 style={{ fontWeight: 700, fontSize: 20 }}>{t.booking.title}</h2>
           </div>
-          <button onClick={onClose} style={closeBtn}><X size={18} /></button>
+          <button onClick={onClose} aria-label="Close" style={closeBtn}><X size={18} /></button>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -300,7 +304,7 @@ function DatePicker({ value, min, onChange }) {
           maxWidth: 'calc(100vw - 64px)',
           padding: 10,
           background: 'var(--bg2)',
-          border: '1px solid rgba(79,134,217,0.28)',
+          border: '1px solid rgba(53,104,179,0.28)',
           borderRadius: 12,
           boxShadow: '0 20px 48px rgba(0,0,0,0.45)',
           zIndex: 1200,
@@ -339,8 +343,8 @@ function DatePicker({ value, min, onChange }) {
                   style={{
                     height: 28,
                     borderRadius: 7,
-                    border: isSelected ? '1px solid var(--blue-light)' : isToday ? '1px solid rgba(79,134,217,0.55)' : '1px solid transparent',
-                    background: isSelected ? 'var(--blue)' : isToday ? 'rgba(79,134,217,0.12)' : 'transparent',
+                    border: isSelected ? '1px solid var(--blue-light)' : isToday ? '1px solid rgba(53,104,179,0.55)' : '1px solid transparent',
+                    background: isSelected ? 'var(--blue)' : isToday ? 'rgba(53,104,179,0.12)' : 'transparent',
                     color: isDisabled ? 'var(--text3)' : isSelected ? '#fff' : isCurrentMonth ? 'var(--text)' : 'rgba(148,163,184,0.55)',
                     fontSize: 12,
                     fontWeight: isSelected || isToday ? 700 : 500,

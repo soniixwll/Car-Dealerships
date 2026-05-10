@@ -1,39 +1,72 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { SlidersHorizontal, RotateCcw, X, Search, ChevronUp, ChevronDown, Check } from 'lucide-react';
 import CustomSelect from '../components/CustomSelect';
 import { useApp } from '../context/AppContext';
 import { getCars, getBrands } from '../services/api';
 import { useIsTablet } from '../hooks/useMediaQuery';
 import CarCard from '../components/CarCard';
+import { CarCardSkeleton } from '../components/Skeleton';
+import Seo from '../components/Seo';
+
+function paramsToFilters(searchParams) {
+  return {
+    selectedBrands: searchParams.get('brand') ? searchParams.get('brand').split(',').filter(Boolean) : [],
+    price_min: searchParams.get('price_min') || '',
+    price_max: searchParams.get('price_max') || '',
+    year_min: searchParams.get('year_min') || '',
+    year_max: searchParams.get('year_max') || '',
+    mileage_max: searchParams.get('mileage_max') || '',
+    ordering: searchParams.get('ordering') || 'price_uah',
+  };
+}
 
 export default function Catalog() {
   const { t } = useApp();
   const [searchParams, setSearchParams] = useSearchParams();
   const isTablet = useIsTablet();
-  const [cars, setCars] = useState([]);
-  const [brands, setBrands] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const [filters, setFilters] = useState({
-    selectedBrands: searchParams.get('brand') ? [searchParams.get('brand')] : [],
-    price_min: '', price_max: searchParams.get('price_max') || '',
-    year_min: '', year_max: '',
-    mileage_max: '',
-    ordering: 'price_uah',
-  });
-  const [draftPrice, setDraftPrice] = useState({ min: '', max: searchParams.get('price_max') || '' });
+  const filters = paramsToFilters(searchParams);
+  const [draftPrice, setDraftPrice] = useState({ min: filters.price_min, max: filters.price_max });
 
-  const applyPrice = () => setFilters(p => ({ ...p, price_min: draftPrice.min, price_max: draftPrice.max }));
-  const clearPrice = () => { setDraftPrice({ min: '', max: '' }); setFilters(p => ({ ...p, price_min: '', price_max: '' })); };
+  const updateFilter = (patch) => {
+    const next = new URLSearchParams(searchParams);
+    Object.entries(patch).forEach(([k, v]) => {
+      if (v === '' || v == null || (Array.isArray(v) && v.length === 0)) next.delete(k);
+      else next.set(k, Array.isArray(v) ? v.join(',') : v);
+    });
+    setSearchParams(next, { replace: true });
+  };
+
+  const setFilters = (updater) => {
+    const current = filters;
+    const next = typeof updater === 'function' ? updater(current) : updater;
+    updateFilter({
+      brand: next.selectedBrands,
+      price_min: next.price_min,
+      price_max: next.price_max,
+      year_min: next.year_min,
+      year_max: next.year_max,
+      mileage_max: next.mileage_max,
+      ordering: next.ordering === 'price_uah' ? '' : next.ordering,
+    });
+  };
+
+  const applyPrice = () => updateFilter({ price_min: draftPrice.min, price_max: draftPrice.max });
+  const clearPrice = () => { setDraftPrice({ min: '', max: '' }); updateFilter({ price_min: '', price_max: '' }); };
   const handlePriceKey = (e) => { if (e.key === 'Enter') applyPrice(); };
 
-  useEffect(() => { getBrands().then(r => setBrands(r.data.results || r.data || [])).catch(() => {}); }, []);
+  const { data: brandsData } = useQuery({
+    queryKey: ['brands'],
+    queryFn: () => getBrands().then(r => r.data.results || r.data || []),
+    staleTime: 5 * 60_000,
+  });
+  const brands = brandsData || [];
 
-  useEffect(() => {
-    setLoading(true);
+  const searchQ = searchParams.get('search') || '';
+  const carsParams = (() => {
     const params = { ordering: filters.ordering };
     if (filters.selectedBrands.length) params.brand = filters.selectedBrands.join(',');
     if (filters.price_min) params.price_min = filters.price_min;
@@ -41,16 +74,39 @@ export default function Catalog() {
     if (filters.year_min) params.year_min = filters.year_min;
     if (filters.year_max) params.year_max = filters.year_max;
     if (filters.mileage_max) params.mileage_max = filters.mileage_max;
-    const sq = searchParams.get('search');
-    if (sq) params.search = sq;
-    getCars(params).then(r => { setCars(r.data.results || []); setTotal(r.data.count || 0); }).catch(() => {}).finally(() => setLoading(false));
-  }, [filters, searchParams]);
+    if (searchQ) params.search = searchQ;
+    return params;
+  })();
 
-  const toggleBrand = (name) => setFilters(p => ({ ...p, selectedBrands: p.selectedBrands.includes(name) ? p.selectedBrands.filter(b => b !== name) : [...p.selectedBrands, name] }));
-  const resetFilters = () => { setFilters({ selectedBrands: [], price_min: '', price_max: '', year_min: '', year_max: '', mileage_max: '', ordering: 'price_uah' }); setDraftPrice({ min: '', max: '' }); };
+  const {
+    data: carsData,
+    isLoading: loading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ['cars', 'infinite', carsParams],
+    queryFn: ({ pageParam = 1 }) => getCars({ ...carsParams, page: pageParam }).then(r => r.data),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => (lastPage?.next ? allPages.length + 1 : undefined),
+  });
+  const cars = carsData?.pages.flatMap(p => p.results || []) || [];
+  const total = carsData?.pages[0]?.count || 0;
+
+  const toggleBrand = (name) => {
+    const current = filters.selectedBrands;
+    const next = current.includes(name) ? current.filter(b => b !== name) : [...current, name];
+    updateFilter({ brand: next });
+  };
+  const resetFilters = () => {
+    const next = new URLSearchParams();
+    const search = searchParams.get('search');
+    if (search) next.set('search', search);
+    setSearchParams(next, { replace: true });
+    setDraftPrice({ min: '', max: '' });
+  };
 
   const sidebarFloating = isTablet;
-  const showSidebar = !isTablet || filtersOpen;
 
   const sidebarOuter = sidebarFloating
     ? { position: 'fixed', top: 0, left: 0, width: 'min(320px, 85vw)', height: '100vh', zIndex: 200, background: 'var(--bg2)', overflowY: 'auto', padding: 20, transform: filtersOpen ? 'translateX(0)' : 'translateX(-100%)', transition: 'transform .25s', boxShadow: filtersOpen ? '4px 0 24px rgba(0,0,0,0.4)' : 'none' }
@@ -61,6 +117,10 @@ export default function Catalog() {
 
   return (
     <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 16px' }}>
+      <Seo
+        title={t.catalog.title}
+        description={`${total ? `${total} ` : ''}${t.catalog.vehicles}. ${t.catalog.title}.`}
+      />
       <div style={{ marginBottom: 20, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
         <div>
           <h1 style={{ fontSize: 'clamp(21px, 3vw, 26px)', fontWeight: 600, lineHeight: 1.15 }}>{t.catalog.title}</h1>
@@ -187,7 +247,7 @@ export default function Catalog() {
 
           {loading ? (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 20 }}>
-              {Array(6).fill(0).map((_, i) => <div key={i} style={{ height: 360, background: 'var(--card)', borderRadius: 16, opacity: 0.5 }} />)}
+              {Array(6).fill(0).map((_, i) => <CarCardSkeleton key={i} />)}
             </div>
           ) : cars.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '100px 0', color: 'var(--text2)' }}>
@@ -198,9 +258,28 @@ export default function Catalog() {
               <div>{t.catalog.try_change}</div>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 20 }}>
-              {cars.map(car => <CarCard key={car.id} car={car} />)}
-            </div>
+            <>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 20 }}>
+                {cars.map(car => <CarCard key={car.id} car={car} />)}
+                {isFetchingNextPage && Array(3).fill(0).map((_, i) => <CarCardSkeleton key={`s-${i}`} />)}
+              </div>
+              {hasNextPage && (
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: 32 }}>
+                  <button
+                    onClick={() => fetchNextPage()}
+                    disabled={isFetchingNextPage}
+                    style={{ padding: '12px 32px', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 100, color: 'var(--text)', fontSize: 14, fontWeight: 600, cursor: isFetchingNextPage ? 'wait' : 'pointer', opacity: isFetchingNextPage ? 0.6 : 1 }}
+                  >
+                    {isFetchingNextPage ? '…' : (t.catalog.load_more || 'Завантажити ще')}
+                  </button>
+                </div>
+              )}
+              {!hasNextPage && cars.length >= 12 && (
+                <div style={{ textAlign: 'center', marginTop: 32, color: 'var(--text3)', fontSize: 13 }}>
+                  {t.catalog.all_loaded || `Показано всі ${total}`}
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

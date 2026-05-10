@@ -1,4 +1,5 @@
 import axios from 'axios';
+import toast from 'react-hot-toast';
 
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL || '/api',
@@ -11,13 +12,59 @@ api.interceptors.request.use(cfg => {
   return cfg;
 });
 
+const clearAuth = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('refresh');
+  localStorage.removeItem('user');
+};
+
+let refreshing = null;
+
+const refreshAccessToken = () => {
+  if (refreshing) return refreshing;
+  const refresh = localStorage.getItem('refresh');
+  if (!refresh) return Promise.reject(new Error('No refresh token'));
+
+  refreshing = axios
+    .post(`${api.defaults.baseURL}/auth/token/refresh/`, { refresh }, {
+      headers: { 'ngrok-skip-browser-warning': 'true' },
+    })
+    .then(r => {
+      localStorage.setItem('token', r.data.access);
+      if (r.data.refresh) localStorage.setItem('refresh', r.data.refresh);
+      return r.data.access;
+    })
+    .finally(() => { refreshing = null; });
+
+  return refreshing;
+};
+
+const isAuthEndpoint = (url = '') =>
+  url.includes('/auth/login') ||
+  url.includes('/auth/register') ||
+  url.includes('/auth/google') ||
+  url.includes('/auth/token/refresh');
+
 api.interceptors.response.use(
   res => res,
-  err => {
-    if (err.response?.status === 401 && localStorage.getItem('token')) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.reload();
+  async err => {
+    const original = err.config;
+    const status = err.response?.status;
+
+    if (status === 401 && original && !original._retried && !isAuthEndpoint(original.url)) {
+      original._retried = true;
+      try {
+        const access = await refreshAccessToken();
+        original.headers.Authorization = `Bearer ${access}`;
+        return api(original);
+      } catch {
+        clearAuth();
+        if (window.location.pathname !== '/login') {
+          toast.error('Сесія завершилась. Увійдіть знову.');
+          window.location.assign('/login');
+        }
+        return Promise.reject(err);
+      }
     }
     return Promise.reject(err);
   }
@@ -32,6 +79,7 @@ export const calculateCost = (id, params) => api.get(`/cars/${id}/calculate/`, {
 export const login = (data) => api.post('/auth/login/', data);
 export const register = (data) => api.post('/auth/register/', data);
 export const googleLogin = (idToken) => api.post('/auth/google/', { id_token: idToken });
+export const logoutApi = (refresh) => api.post('/auth/logout/', { refresh });
 export const getProfile = () => api.get('/auth/profile/');
 export const updateProfile = (data) => api.patch('/auth/profile/', data);
 export const getBookings = () => api.get('/bookings/');

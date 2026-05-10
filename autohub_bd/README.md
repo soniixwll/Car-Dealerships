@@ -56,6 +56,35 @@ python manage.py dumpdata users.CustomUser dealerships cars \
 
 Закомітити `fixtures/seed.json`.
 
+## Локальна розробка через Docker
+
+Альтернатива до venv — підняти весь стек через `docker-compose.yml` у корені репо. Postgres + Django однією командою.
+
+```bash
+cd ..   # в корінь репо, де лежить docker-compose.yml
+cp autohub_bd/.env.example autohub_bd/.env   # за бажанням, налаштувати GOOGLE_OAUTH_CLIENT_ID
+docker compose up --build
+```
+
+При першому запуску застосуються міграції автоматично (див. `Dockerfile` CMD). Після цього:
+
+```bash
+docker compose exec backend python manage.py loaddata fixtures/seed.json
+docker compose exec backend python manage.py createsuperuser
+```
+
+API: http://127.0.0.1:8000/api/. Postgres експонується на 5432 — можна підключитись будь-яким клієнтом.
+
+Зупинити: `docker compose down`. З видаленням даних: `docker compose down -v`.
+
+## Запуск тестів
+
+```bash
+python manage.py test
+```
+
+Тести покривають auth flow (register/login/refresh/logout, blacklist), cars list/filter/favorites, bookings (auth, validation, slot taken, availability).
+
 ## Структура
 
 - `autohub/` — конфіг Django (settings, urls)

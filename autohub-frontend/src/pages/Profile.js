@@ -17,7 +17,7 @@ export default function Profile() {
   useEffect(() => {
     if (!user) { navigate('/login'); return; }
     getProfile().then(r => setProfile({ username: r.data.username || '', phone: r.data.phone || '' })).catch(() => {});
-  }, [user]);
+  }, [user, navigate]);
 
   useEffect(() => {
     if (!user || tab !== 'test_drives') return;

@@ -18,7 +18,7 @@ export default function Register() {
     try {
       await registerApi({ email: form.email, username: form.username, password: form.password, password2: form.password2, phone: form.phone });
       const r = await loginApi({ email: form.email, password: form.password });
-      login({ email: r.data.email, username: r.data.username, role: r.data.role }, r.data.access);
+      login({ email: r.data.email, username: r.data.username, role: r.data.role }, r.data.access, r.data.refresh);
       navigate('/');
     } catch (err) {
       const d = err.response?.data;
@@ -30,7 +30,7 @@ export default function Register() {
     setError('');
     try {
       const r = await googleLoginApi(credResp.credential);
-      login({ email: r.data.email, username: r.data.username, role: r.data.role }, r.data.access);
+      login({ email: r.data.email, username: r.data.username, role: r.data.role }, r.data.access, r.data.refresh);
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.detail || t.auth.google_failed);
@@ -46,10 +46,10 @@ export default function Register() {
         {error && <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#ef4444', marginBottom: 16 }}>{error}</div>}
 
         <form onSubmit={handleSubmit}>
-          {[['email', t.auth.email, 'email', 'your@email.com'], ['username', t.auth.username, 'text', 'username'], ['phone', t.auth.phone, 'tel', '+380 67 000 0000'], ['password', t.auth.password, 'password', '••••••••'], ['password2', t.auth.confirm_password, 'password', '••••••••']].map(([key, label, type, ph]) => (
+          {[['email', t.auth.email, 'email', 'your@email.com', 'email'], ['username', t.auth.username, 'text', 'username', 'username'], ['phone', t.auth.phone, 'tel', '+380 67 000 0000', 'tel'], ['password', t.auth.password, 'password', '••••••••', 'new-password'], ['password2', t.auth.confirm_password, 'password', '••••••••', 'new-password']].map(([key, label, type, ph, ac]) => (
             <div key={key} style={{ marginBottom: 14 }}>
-              <label style={{ display: 'block', fontSize: 13, color: 'var(--text2)', marginBottom: 6, fontWeight: 500 }}>{label}</label>
-              <input type={type} value={form[key]} onChange={e => setForm(p => ({ ...p, [key]: e.target.value }))} placeholder={ph} required={key !== 'phone'} style={{ width: '100%', padding: '12px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)', fontSize: 15, outline: 'none' }} />
+              <label htmlFor={`reg-${key}`} style={{ display: 'block', fontSize: 13, color: 'var(--text2)', marginBottom: 6, fontWeight: 500 }}>{label}</label>
+              <input id={`reg-${key}`} type={type} autoComplete={ac} value={form[key]} onChange={e => setForm(p => ({ ...p, [key]: e.target.value }))} placeholder={ph} required={key !== 'phone'} style={{ width: '100%', padding: '12px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, color: 'var(--text)', fontSize: 15, outline: 'none' }} />
             </div>
           ))}
           <button type="submit" disabled={loading} style={{ width: '100%', minHeight: 48, padding: '14px', background: 'linear-gradient(135deg,var(--blue-hover),var(--blue))', color: '#fff', border: 'none', borderRadius: 10, fontSize: 15, fontWeight: 600, marginTop: 8, cursor: 'pointer', opacity: loading ? 0.7 : 1, whiteSpace: 'nowrap' }}>
